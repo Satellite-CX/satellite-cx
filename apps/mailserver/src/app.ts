@@ -46,6 +46,7 @@ class EmailReceiver {
     callback: (err?: Error) => void
   ): void {
     console.log(`📧 New connection from ${session.remoteAddress}`);
+    console.log(`🔍 Session ID: ${session.id}`);
     callback();
   }
 
@@ -60,20 +61,19 @@ class EmailReceiver {
 
   private onMailFrom(
     address: SMTPServerAddress,
-    _session: SMTPServerSession,
+    session: SMTPServerSession,
     callback: (err?: Error) => void
   ): void {
-    console.log(`📤 Mail from: ${address.address}`);
+    console.log(`📤 Mail from: ${address.address} (Session: ${session.id})`);
     callback();
   }
 
   private onRcptTo(
     address: SMTPServerAddress,
-    _session: SMTPServerSession,
+    session: SMTPServerSession,
     callback: (err?: Error) => void
   ): void {
-    console.log(`📥 Mail to: ${address.address}`);
-
+    console.log(`📥 Mail to: ${address.address} (Session: ${session.id})`);
     callback();
   }
 
@@ -83,7 +83,9 @@ class EmailReceiver {
     callback: (err?: Error) => void
   ): Promise<void> {
     try {
-      console.log(`📨 Processing email data from ${session.remoteAddress}`);
+      console.log(
+        `📨 Processing email data from ${session.remoteAddress} (Session: ${session.id})`
+      );
 
       const parsed: ParsedMail = await simpleParser(stream);
 
@@ -128,7 +130,7 @@ class EmailReceiver {
     console.log("=".repeat(80) + "\n");
   }
 
-  public start(port: number = 25): void {
+  public start(port: number): void {
     this.server.listen(port, () => {
       console.log(`🚀 SMTP server listening on port ${port}`);
       console.log(`🏠 Server hostname: ${env.MAILSERVER_HOSTNAME}`);
