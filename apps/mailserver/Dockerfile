@@ -47,7 +47,6 @@ USER smtp
 
 COPY --from=transpiler /app/apps/mailserver/build/app.js .
 
-ENV PORT=25
-EXPOSE 25
+EXPOSE 25 587
 
 ENTRYPOINT ["bun", "run", "app.js"]

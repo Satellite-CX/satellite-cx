@@ -5,7 +5,8 @@ services:
       dockerfile: apps/mailserver/Dockerfile
     container_name: mailserver
     ports:
-      - "${MAILSERVER_PORT}:25"
+      - "25:25"
+      - "587:587"
     hostname: ${MAILSERVER_FQDN}
     restart: unless-stopped
     env_file:
