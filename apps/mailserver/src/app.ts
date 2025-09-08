@@ -33,6 +33,11 @@ class EmailReceiver {
       allowInsecureAuth: true,
       name: env.MAILSERVER_HOSTNAME,
       banner: `220 ${env.MAILSERVER_HOSTNAME} ESMTP Satellite CX Email Server`,
+      // Add SMTP capabilities
+      disabledCommands: ["STARTTLS"], // Disable STARTTLS to avoid TLS issues
+      socketTimeout: 30000, // 30 seconds timeout
+      // Add size limit
+      size: 10485760, // 10MB max message size
       onConnect: this.onConnect.bind(this),
       onAuth: this.onAuth.bind(this),
       onMailFrom: this.onMailFrom.bind(this),
