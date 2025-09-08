@@ -1,0 +1,12 @@
+services:
+  mailserver:
+    build:
+      context: .
+      dockerfile: apps/mailserver/Dockerfile
+    container_name: mailserver
+    ports:
+      - "${MAILSERVER_PORT}:25"
+    hostname: ${MAILSERVER_FQDN}
+    restart: unless-stopped
+    env_file:
+      - .env
