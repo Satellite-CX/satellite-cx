@@ -1,10 +1,5 @@
-import {
-  SMTPServer,
-  type SMTPServerSession,
-  type SMTPServerAddress,
-} from "smtp-server";
 import { simpleParser, type ParsedMail } from "mailparser";
-import { Readable } from "stream";
+import { SMTPServer } from "smtp-server";
 import { z } from "zod";
 
 const env = z
@@ -14,151 +9,64 @@ const env = z
   })
   .parse(process.env);
 
-interface EmailData {
-  from: SMTPServerAddress;
-  to: SMTPServerAddress[];
-  subject: string;
-  text?: string;
-  html?: string;
-  timestamp: Date;
-}
-
-class EmailReceiver {
-  private server: SMTPServer;
-
-  constructor() {
-    this.server = new SMTPServer({
-      secure: false,
-      authOptional: true,
-      allowInsecureAuth: true,
-      name: env.MAILSERVER_HOSTNAME,
-      banner: `220 ${env.MAILSERVER_HOSTNAME} ESMTP Satellite CX Email Server`,
-      // Add SMTP capabilities
-      disabledCommands: ["STARTTLS"], // Disable STARTTLS to avoid TLS issues
-      socketTimeout: 30000, // 30 seconds timeout
-      // Add size limit
-      size: 10485760, // 10MB max message size
-      onConnect: this.onConnect.bind(this),
-      onAuth: this.onAuth.bind(this),
-      onMailFrom: this.onMailFrom.bind(this),
-      onRcptTo: this.onRcptTo.bind(this),
-      onData: this.onData.bind(this),
-    });
-  }
-
-  private onConnect(
-    session: SMTPServerSession,
-    callback: (err?: Error) => void
-  ): void {
-    console.log(`📧 New connection from ${session.remoteAddress}`);
-    console.log(`🔍 Session ID: ${session.id}`);
-    callback();
-  }
-
-  private onAuth(
-    auth: any,
-    session: SMTPServerSession,
-    callback: (err?: Error | null, response?: any) => void
-  ): void {
-    console.log(`🔐 Auth attempt from ${session.remoteAddress}`);
-    callback(null, { user: auth.username });
-  }
-
-  private onMailFrom(
-    address: SMTPServerAddress,
-    session: SMTPServerSession,
-    callback: (err?: Error) => void
-  ): void {
-    console.log(`📤 Mail from: ${address.address} (Session: ${session.id})`);
-    callback();
-  }
-
-  private onRcptTo(
-    address: SMTPServerAddress,
-    session: SMTPServerSession,
-    callback: (err?: Error) => void
-  ): void {
-    console.log(`📥 Mail to: ${address.address} (Session: ${session.id})`);
-    callback();
-  }
-
-  private async onData(
-    stream: Readable,
-    session: SMTPServerSession,
-    callback: (err?: Error) => void
-  ): Promise<void> {
+const server = new SMTPServer({
+  secure: false,
+  authOptional: true,
+  allowInsecureAuth: true,
+  name: env.MAILSERVER_HOSTNAME,
+  banner: `220 ${env.MAILSERVER_HOSTNAME} ESMTP Satellite CX Email Server`,
+  disabledCommands: ["STARTTLS"],
+  socketTimeout: 30000, // 30 seconds
+  size: 10485760, // 10MB max message size
+  onData: async (stream, session, callback) => {
     try {
-      console.log(
-        `📨 Processing email data from ${session.remoteAddress} (Session: ${session.id})`
-      );
-
       const parsed: ParsedMail = await simpleParser(stream);
 
-      const emailData: EmailData = {
-        from: session.envelope.mailFrom as SMTPServerAddress,
+      const emailData = {
+        from: session.envelope.mailFrom,
         to: session.envelope.rcptTo,
         subject: parsed.subject || "(No Subject)",
         text: parsed.text,
         html: parsed.html ? parsed.html.toString() : undefined,
         timestamp: new Date(),
       };
+      console.log("\n" + "=".repeat(80));
+      console.log("📧 NEW EMAIL RECEIVED");
+      console.log("=".repeat(80));
+      console.log(`⏰ Timestamp: ${emailData.timestamp.toISOString()}`);
+      console.log(`📤 From: ${emailData.from}`);
+      console.log(
+        `📥 To: ${emailData.to.map((addr) => addr.address).join(", ")}`
+      );
+      console.log(`📋 Subject: ${emailData.subject}`);
+      console.log("📄 Content:");
 
-      this.logEmail(emailData);
+      if (emailData.text) {
+        console.log("--- TEXT ---");
+        console.log(emailData.text);
+      }
 
-      callback();
+      if (emailData.html) {
+        console.log("--- HTML ---");
+        console.log(emailData.html);
+      }
+
+      console.log("=".repeat(80) + "\n");
     } catch (error) {
       console.error("❌ Error processing email:", error);
       callback(error as Error);
     }
-  }
+  },
+});
 
-  private logEmail(email: EmailData): void {
-    console.log("\n" + "=".repeat(80));
-    console.log("📧 NEW EMAIL RECEIVED");
-    console.log("=".repeat(80));
-    console.log(`⏰ Timestamp: ${email.timestamp.toISOString()}`);
-    console.log(`📤 From: ${email.from.address}`);
-    console.log(`📥 To: ${email.to.map((addr) => addr.address).join(", ")}`);
-    console.log(`📋 Subject: ${email.subject}`);
-    console.log("📄 Content:");
+server.listen(env.MAILSERVER_PORT, () => {
+  console.log(`🚀 SMTP server listening on port ${env.MAILSERVER_PORT}`);
+  console.log(`🏠 Server hostname: ${env.MAILSERVER_HOSTNAME}`);
+  console.log(
+    `🌐 Make sure your DNS MX records points to ${env.MAILSERVER_HOSTNAME}`
+  );
+});
 
-    if (email.text) {
-      console.log("--- TEXT ---");
-      console.log(email.text);
-    }
-
-    if (email.html) {
-      console.log("--- HTML ---");
-      console.log(email.html);
-    }
-
-    console.log("=".repeat(80) + "\n");
-  }
-
-  public start(port: number): void {
-    this.server.listen(port, () => {
-      console.log(`🚀 SMTP server listening on port ${port}`);
-      console.log(`🏠 Server hostname: ${env.MAILSERVER_HOSTNAME}`);
-      console.log(
-        `🌐 Make sure your DNS MX records points to ${env.MAILSERVER_HOSTNAME}`
-      );
-    });
-
-    this.server.on("error", (err: Error) => {
-      console.error("❌ SMTP server error:", err);
-    });
-
-    process.on("SIGTERM", () => {
-      console.log("📴 Shutting down SMTP server...");
-      this.server.close();
-    });
-
-    process.on("SIGINT", () => {
-      console.log("📴 Shutting down SMTP server...");
-      this.server.close();
-    });
-  }
-}
-
-const emailReceiver = new EmailReceiver();
-emailReceiver.start(env.MAILSERVER_PORT);
+server.on("error", (err: Error) => {
+  console.error("❌ SMTP server error:", err);
+});
