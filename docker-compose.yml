@@ -7,7 +7,7 @@ services:
     ports:
       - "25:25"
       - "587:587"
-    hostname: ${MAILSERVER_FQDN}
+    hostname: ${MAILSERVER_HOSTNAME}
     restart: unless-stopped
     env_file:
       - .env
