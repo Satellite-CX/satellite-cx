@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "bun run --hot src/app.ts",
-    "build": "bun build ./src/app.ts --outdir ./build --target bun"
+    "build": "bun build ./src/app.ts --outdir ./build --target bun",
+    "test": "bun test --reporter=junit --reporter-outfile=./test-results.xml"
   },
   "devDependencies": {
     "@types/bun": "latest",
