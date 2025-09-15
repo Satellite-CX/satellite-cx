@@ -1,4 +1,4 @@
-name: SMTP Server Tests
+name: Run Tests
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: pnpm install --filter mailserver...
+        run: pnpm install
 
-      - name: Run SMTP Server tests
-        run: pnpm test --filter mailserver
+      - name: Run tests
+        run: pnpm test
