@@ -10,12 +10,14 @@ const config = {
 
 // ByPass RLS
 export const adminDB = drizzle({
-  client: postgres(env.ADMIN_DATABASE_URL, { prepare: false }),
+  client: postgres(env.DATABASE_URL, { prepare: false }),
   ...config,
 });
 
 // Protected by RLS
-export const clientDB = drizzle({
-  client: postgres(env.RLS_DATABASE_URL, { prepare: false }),
-  ...config,
-});
+export const clientDB = env.ENABLE_RLS
+  ? drizzle({
+      client: postgres(env.RLS_CLIENT_DATABASE_URL!, { prepare: false }),
+      ...config,
+    })
+  : adminDB;

@@ -9,7 +9,10 @@
     "check-types": "turbo run check-types",
     "test": "turbo run test",
     "db:up": "docker compose -f docker-compose.dev.yml up db --build -d --force-recreate",
-    "db:push": "pnpm --filter @repo/db push"
+    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:reset": "pnpm db:down && pnpm db:up && sleep 3 && pnpm db:push",
+    "db:push": "pnpm --filter @repo/db push",
+    "db:push-with-rls": "pnpm --filter @repo/db push-with-rls"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

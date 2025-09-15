@@ -1,18 +1,16 @@
 import { faker } from "@faker-js/faker";
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { eq } from "drizzle-orm";
-import { reset, seed } from "drizzle-seed";
-import { createRlsUser } from "../scripts/create-rls-user";
 import { createDrizzleClient } from "../src";
 import { adminDB } from "../src/client";
 import * as schema from "../src/schema";
-import { Tenant, users } from "../src/schema";
+import { Tenant, users, tenants } from "../src/schema";
+import { seed } from "../src/seed";
 
 let tenant: Tenant;
 
 beforeAll(async () => {
-  await createRlsUser();
-  await seed(adminDB, schema);
+  await seed();
   const allTenants = await adminDB.query.tenants.findMany({
     with: {
       users: true,
@@ -24,7 +22,14 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await reset(adminDB, schema);
+  console.log("Cleaning up database...");
+  await adminDB.delete(users);
+  await adminDB.delete(tenants);
+});
+
+test("DB Should be seeded", async () => {
+  const allTenants = await adminDB.query.tenants.findMany();
+  expect(allTenants.length).toBeGreaterThan(0);
 });
 
 test("Users can only view their own tenants", async () => {

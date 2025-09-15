@@ -18,6 +18,6 @@ export default defineConfig({
   dialect: "postgresql",
   verbose: true,
   dbCredentials: {
-    url: process.env.ADMIN_DATABASE_URL!,
+    url: process.env.DATABASE_URL!,
   },
 });
