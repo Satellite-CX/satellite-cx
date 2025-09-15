@@ -1,11 +1,21 @@
 import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import * as schema from "./schema";
+import postgres from "postgres";
+import type { DrizzleConfig } from "drizzle-orm";
+import { env } from "@repo/validators";
 
-const connectionString = process.env.DATABASE_URL || "postgresql://localhost:5432/satellite_cx";
+const config = {
+  schema,
+} satisfies DrizzleConfig<typeof schema>;
 
-// Disable prefetch as it is not supported for "Transaction" pool mode
-const client = postgres(connectionString, { prepare: false });
-export const db = drizzle(client, { schema });
+// ByPass RLS
+export const adminDB = drizzle({
+  client: postgres(env.ADMIN_DATABASE_URL, { prepare: false }),
+  ...config,
+});
 
-export type Database = typeof db;
+// Protected by RLS
+export const clientDB = drizzle({
+  client: postgres(env.RLS_DATABASE_URL, { prepare: false }),
+  ...config,
+});

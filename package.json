@@ -7,7 +7,9 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "db:up": "docker compose -f docker-compose.dev.yml up db --build -d --force-recreate",
+    "db:push": "pnpm --filter @repo/db push"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

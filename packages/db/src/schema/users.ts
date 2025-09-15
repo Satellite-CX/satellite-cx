@@ -1,20 +1,18 @@
-import { pgTable, text, timestamp, uuid, boolean, pgEnum } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { integer, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { tenants } from "./tenants";
 
-export const userRoleEnum = pgEnum("user_role", ["admin", "agent", "customer"]);
+export const rolesEnum = pgEnum("roles", ["admin", "user"]);
 
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  email: text("email").notNull().unique(),
-  name: text("name").notNull(),
-  role: userRoleEnum("role").notNull().default("customer"),
-  isActive: boolean("is_active").notNull().default(true),
+  id: integer("id").generatedAlwaysAsIdentity().primaryKey(),
+  tenantId: integer("tenant_id")
+    .references(() => tenants.id)
+    .notNull(),
+  email: text("email").notNull(),
+  password: text("password").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  role: rolesEnum().default("admin").notNull(),
 });
 
-export const insertUserSchema = createInsertSchema(users);
-export const selectUserSchema = createSelectSchema(users);
-
 export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
