@@ -8,7 +8,7 @@ if (!env.ENABLE_RLS) {
   process.exit(0);
 }
 
-const sqlPath = path.resolve(__dirname, "..", "sql", "rls-policy.sql");
+const sqlPath = path.resolve(__dirname, "..", "sql", "rls-policies.sql");
 const file = Bun.file(sqlPath);
 const text = await file.text();
 
