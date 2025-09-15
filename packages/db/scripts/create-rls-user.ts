@@ -20,6 +20,7 @@ try {
     `);
 
   console.log("RLS user created:", res);
+  process.exit(0);
 } catch (error: any) {
   if (error.code === "42710") {
     // User already exists, just grant privileges

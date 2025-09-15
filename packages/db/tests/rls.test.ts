@@ -1,11 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { afterAll, beforeAll, expect, test } from "bun:test";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { createDrizzleClient } from "../src";
 import { adminDB } from "../src/client";
 import * as schema from "../src/schema";
 import { Tenant, users, tenants } from "../src/schema";
 import { seed } from "../src/seed";
+import { env } from "@repo/validators";
 
 let tenant: Tenant;
 
@@ -25,6 +26,10 @@ afterAll(async () => {
   console.log("Cleaning up database...");
   await adminDB.delete(users);
   await adminDB.delete(tenants);
+});
+
+test("RLS Should be enabled", async () => {
+  expect(env.ENABLE_RLS).toBe(true);
 });
 
 test("DB Should be seeded", async () => {
