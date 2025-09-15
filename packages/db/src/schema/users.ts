@@ -1,12 +1,15 @@
 import { integer, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { tenants } from "./tenants";
 
-export const rolesEnum = pgEnum("roles", ["admin", "user"]);
+const roles = ["admin", "agent"] as const;
+export type Role = (typeof roles)[number];
+
+export const rolesEnum = pgEnum("roles", roles);
 
 export const users = pgTable("users", {
   id: integer("id").generatedAlwaysAsIdentity().primaryKey(),
   tenantId: integer("tenant_id")
-    .references(() => tenants.id)
+    .references(() => tenants.id, { onDelete: "cascade" })
     .notNull(),
   email: text("email").notNull(),
   password: text("password").notNull(),
