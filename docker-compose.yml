@@ -11,3 +11,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    networks:
+      - scx-network
+
+networks:
+  scx-network:
+    driver: bridge
