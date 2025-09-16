@@ -28,6 +28,7 @@ try {
     await adminDB.execute(sql`
         GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${sql.raw(rlsUser)};
       `);
+    process.exit(0);
   } else {
     throw error;
   }
