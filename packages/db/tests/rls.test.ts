@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { env } from "@repo/validators";
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { reset, seed } from "drizzle-seed";
 import { createDrizzleClient } from "../src";
 import { adminDB } from "../src/client";
@@ -44,6 +44,15 @@ describe("RLS Policies", () => {
 
   test("RLS Should be enabled", async () => {
     expect(env.ENABLE_RLS).toBe(true);
+
+    const rlsQuery = await adminDB.execute(
+      sql`SELECT policyname FROM pg_policies WHERE tablename = 'tenants'`
+    );
+    const policies = rlsQuery.map((row) => row.policyname);
+    expect(policies).toHaveLength(3);
+    expect(policies).toContain("Everyone can only view their own tenant");
+    expect(policies).toContain("Only admins can edit their own tenant");
+    expect(policies).toContain("Only admins can delete their own tenant");
   });
 
   describe("Viewing tenants", () => {
