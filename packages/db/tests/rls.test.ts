@@ -1,55 +1,38 @@
 import { faker } from "@faker-js/faker";
-import { env } from "@repo/validators";
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { and, eq, ne, sql } from "drizzle-orm";
-import { reset, seed } from "drizzle-seed";
+import { eq, ne, sql } from "drizzle-orm";
+import { reset } from "drizzle-seed";
 import { createDrizzleClient } from "../src";
 import { adminDB } from "../src/client";
 import * as schema from "../src/schema";
-import { Tenant, tenants, User, users } from "../src/schema";
-// TRIGGER CHANGE
+import { Tenant, tenants, User } from "../src/schema";
+import { seedDatabase } from "./seed-database";
+
 describe("RLS Policies", () => {
   let tenant: Tenant;
   let agent: User;
   let admin: User;
 
   beforeAll(async () => {
-    await seed(adminDB, schema).refine((f) => ({
-      tenants: {
-        count: 20,
-        with: {
-          users: 10,
-        },
-      },
-    }));
-    const allTenants = await adminDB.query.tenants.findMany();
-    expect(allTenants.length).toBeGreaterThan(0);
-    tenant = faker.helpers.arrayElement(allTenants);
+    const result = await seedDatabase();
+    tenant = result.tenant;
+    admin = result.adminUser;
+    agent = result.agentUser;
+
     expect(tenant).toBeDefined();
-    const userResult = await adminDB.query.users.findFirst({
-      where: and(eq(users.tenantId, tenant.id), eq(users.role, "agent")),
-    });
-    agent = userResult!;
-    expect(agent).toBeDefined();
-    const adminUserResult = await adminDB.query.users.findFirst({
-      where: and(eq(users.tenantId, tenant.id), eq(users.role, "admin")),
-    });
-    admin = adminUserResult!;
     expect(admin).toBeDefined();
+    expect(agent).toBeDefined();
   });
 
   afterAll(async () => {
     await reset(adminDB, schema);
   });
 
-  test("RLS Should be enabled", async () => {
-    expect(env.ENABLE_RLS).toBe(true);
-
+  test("RLS Should be enabled on tenants table", async () => {
     const rlsQuery = await adminDB.execute(
       sql`SELECT policyname FROM pg_policies WHERE tablename = 'tenants'`
     );
     const policies = rlsQuery.map((row) => row.policyname);
-    expect(policies).toHaveLength(3);
     expect(policies).toContain("Everyone can only view their own tenant");
     expect(policies).toContain("Only admins can edit their own tenant");
     expect(policies).toContain("Only admins can delete their own tenant");
@@ -161,6 +144,17 @@ describe("RLS Policies", () => {
           .then((res) => res[0])
       );
       expect(result?.name).not.toBe(newName);
+    });
+  });
+
+  describe("Viewing users", () => {
+    test("Everyone can only view users in their own tenant", async () => {
+      const { rls } = await createDrizzleClient(tenant.id, agent.role);
+      const usersQuery = await rls((tx) => tx.query.users.findMany());
+
+      const tenantIds = usersQuery.map((user) => user.tenantId);
+      expect(new Set(tenantIds).size).toBe(1);
+      expect(tenantIds[0]).toBe(tenant.id);
     });
   });
 

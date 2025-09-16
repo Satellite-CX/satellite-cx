@@ -25,7 +25,7 @@ export async function createDrizzle({
         async (tx) => {
           try {
             await tx.execute(sql.raw(`SET LOCAL auth.tenant_id = ${tenantId}`));
-            await tx.execute(sql.raw(`SET LOCAL auth.role = ${role}`));
+            await tx.execute(sql.raw(`SET LOCAL auth.role = '${role}'`));
             return await transaction(tx);
           } finally {
             try {
