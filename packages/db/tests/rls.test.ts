@@ -7,7 +7,7 @@ import { createDrizzleClient } from "../src";
 import { adminDB } from "../src/client";
 import * as schema from "../src/schema";
 import { Tenant, tenants, User, users } from "../src/schema";
-
+// TRIGGER CHANGE
 describe("RLS Policies", () => {
   let tenant: Tenant;
   let agent: User;
