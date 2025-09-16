@@ -1,4 +1,4 @@
-name: DB Tests
+name: Database Tests
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
         uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: "24"
           cache: "pnpm"
 
       - uses: oven-sh/setup-bun@v2
@@ -51,8 +51,8 @@ jobs:
           echo "POSTGRES_RLS_PASSWORD=postgres" >> $GITHUB_ENV
           echo "NODE_ENV=test" >> $GITHUB_ENV
 
-      - name: Push database schema with RLS
-        run: pnpm db:push-with-rls
+      - name: Push database schema
+        run: pnpm db:push
 
       - name: Run tests
         run: pnpm test --filter db

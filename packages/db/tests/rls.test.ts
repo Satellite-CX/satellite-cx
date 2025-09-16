@@ -8,8 +8,6 @@ import { adminDB } from "../src/client";
 import * as schema from "../src/schema";
 import { Tenant, tenants, User, users } from "../src/schema";
 
-// trigger change
-
 describe("RLS Policies", () => {
   let tenant: Tenant;
   let agent: User;
