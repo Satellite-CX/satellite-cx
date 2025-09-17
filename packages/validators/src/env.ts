@@ -9,4 +9,6 @@ export const envSchema = z.object({
   POSTGRES_RLS_PASSWORD: z.string().optional(),
 });
 
-export const env = envSchema.parse(process.env);
+export const env = process.env.DISABLE_ENV_CHECK
+  ? process.env
+  : envSchema.parse(process.env);
