@@ -1,19 +1,19 @@
 import { sql } from "drizzle-orm";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import * as schema from "./schema";
-import { Role } from "./schema";
-
+import { Role } from "./schema/auth";
+ 
 type Database = PostgresJsDatabase<typeof schema>;
 
 interface CreateDrizzleOptions {
-  tenantId: number;
+  organizationId: string;
   role: Role;
   admin: Database;
   client: Database;
 }
 
 export async function createDrizzle({
-  tenantId,
+  organizationId,
   role,
   admin,
   client,
@@ -24,7 +24,9 @@ export async function createDrizzle({
       return await client.transaction(
         async (tx) => {
           try {
-            await tx.execute(sql.raw(`SET LOCAL auth.tenant_id = ${tenantId}`));
+            await tx.execute(
+              sql.raw(`SET LOCAL auth.tenant_id = ${organizationId}`)
+            );
             await tx.execute(sql.raw(`SET LOCAL auth.role = '${role}'`));
             return await transaction(tx);
           } finally {

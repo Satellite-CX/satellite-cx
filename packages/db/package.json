@@ -5,13 +5,15 @@
   "type": "module",
   "exports": {
     "./schema": "./src/schema/index.ts",
-    "./client": "./src/client.ts"
+    "./client": "./src/client.ts",
+    "./auth": "./src/lib/auth.ts",
+    "./auth-client": "./src/lib/auth-client.ts"
   },
   "scripts": {
     "dev": "drizzle-kit studio",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate && pnpm prepare-rls",
-    "push": "drizzle-kit push && sleep 3 && pnpm prepare-rls",
+    "push": "drizzle-kit push",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "test": "bun --env-file=../../.env test --reporter=junit --reporter-outfile=./test-results.xml",
@@ -37,6 +39,7 @@
     "dotenv-expand": "^12.0.3",
     "drizzle-kit": "^0.28.1",
     "eslint": "^9.34.0",
+    "nanoid": "^5.1.5",
     "typescript": "5.9.2"
   }
 }
