@@ -47,7 +47,6 @@ jobs:
         run: |
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/satellite_cx_test" >> $GITHUB_ENV
           echo "RLS_CLIENT_DATABASE_URL=postgresql://rls_user:rls_password@localhost:5432/satellite_cx_test" >> $GITHUB_ENV
-          echo "ENABLE_RLS=true" >> $GITHUB_ENV
           echo "POSTGRES_RLS_USER=rls_user" >> $GITHUB_ENV
           echo "POSTGRES_RLS_PASSWORD=rls_password" >> $GITHUB_ENV
           echo "NODE_ENV=test" >> $GITHUB_ENV

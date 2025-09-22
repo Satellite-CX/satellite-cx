@@ -2,8 +2,8 @@ import { sql } from "drizzle-orm";
 import { adminDB } from "../src/client";
 import { env } from "@repo/validators";
 
-if (!env.ENABLE_RLS) {
-  console.log("RLS is not enabled, skipping...");
+if (env.DISABLE_RLS) {
+  console.log("RLS is disabled, skipping...");
   process.exit(0);
 }
 

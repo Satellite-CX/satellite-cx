@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import * as schema from "./schema";
 import postgres from "postgres";
 import type { DrizzleConfig } from "drizzle-orm";
+import { env } from "@repo/validators";
 
 const config = {
   schema,
@@ -14,11 +15,11 @@ export const adminDB = drizzle({
 });
 
 // Protected by RLS
-export const clientDB = process.env.ENABLE_RLS
-  ? drizzle({
+export const clientDB = env.DISABLE_RLS
+  ? adminDB
+  : drizzle({
       client: postgres(process.env.RLS_CLIENT_DATABASE_URL!, {
         prepare: false,
       }),
       ...config,
-    })
-  : adminDB;
+    });
