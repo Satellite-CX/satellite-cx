@@ -9,11 +9,13 @@ import * as schema from "./schema";
 
 export async function createDrizzleClient(
   organizationId?: string,
-  role?: string
+  role?: string,
+  userId?: string
 ) {
   return await createDrizzle({
     organizationId,
     role,
+    userId,
     admin: adminDB,
     client: clientDB,
   });
