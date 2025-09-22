@@ -6,9 +6,11 @@ import type {
 import { adminDB, clientDB } from "./client";
 import { createDrizzle } from "./create-drizzle";
 import * as schema from "./schema";
-import { Role } from "./schema/auth";
 
-export async function createDrizzleClient(organizationId: string, role: Role) {
+export async function createDrizzleClient(
+  organizationId: string,
+  role: string
+) {
   return await createDrizzle({
     organizationId,
     role,

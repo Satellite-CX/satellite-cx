@@ -95,11 +95,11 @@ importers:
         specifier: ^17.2.2
         version: 17.2.2
       drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@types/pg@8.15.5)(@types/react@19.1.0)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)(react@19.1.0)
+        specifier: ^0.44.5
+        version: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
       drizzle-seed:
         specifier: ^0.3.1
-        version: 0.3.1(drizzle-orm@0.36.4(@types/pg@8.15.5)(@types/react@19.1.0)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)(react@19.1.0))
+        version: 0.3.1(drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7))
       postgres:
         specifier: ^3.4.5
         version: 3.4.7
@@ -131,6 +131,34 @@ importers:
       nanoid:
         specifier: ^5.1.5
         version: 5.1.5
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/trpc:
+    dependencies:
+      '@repo/db':
+        specifier: workspace:*
+        version: link:../db
+      '@repo/validators':
+        specifier: workspace:*
+        version: link:../validators
+      '@trpc/server':
+        specifier: ^11.4.3
+        version: 11.5.1(typescript@5.9.2)
+      drizzle-orm:
+        specifier: ^0.44.5
+        version: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
+      superjson:
+        specifier: 2.2.1
+        version: 2.2.1
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../tooling/typescript-config
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -1104,6 +1132,11 @@ packages:
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
 
+  '@trpc/server@11.5.1':
+    resolution: {integrity: sha512-KIDzHRS5m8U1ncPwjgtOtPWK9lNO0kYL7b+lnvKXRqowSAQIEC/z6y7g/dkt4Aqv3DKI/STLydt2/afrP1QrxQ==}
+    peerDependencies:
+      typescript: '>=5.7.2'
+
   '@types/bun@1.2.21':
     resolution: {integrity: sha512-NiDnvEqmbfQ6dmZ3EeUO577s4P5bf4HCTXtI6trMc6f6RzirY5IrF3aIookuSpyslFzrnvv2lmEWv5HyC1X79A==}
 
@@ -1360,6 +1393,10 @@ packages:
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
+  copy-anything@3.0.5:
+    resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
+    engines: {node: '>=12.13'}
+
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -1447,36 +1484,36 @@ packages:
     resolution: {integrity: sha512-JimOV+ystXTWMgZkLHYHf2w3oS28hxiH1FR0dkmJLc7GHzdGJoJAQtQS5DRppnabsRZwE2U1F6CuezVBgmsBBQ==}
     hasBin: true
 
-  drizzle-orm@0.36.4:
-    resolution: {integrity: sha512-1OZY3PXD7BR00Gl61UUOFihslDldfH4NFRH2MbP54Yxi0G/PKn4HfO65JYZ7c16DeP3SpM3Aw+VXVG9j6CRSXA==}
+  drizzle-orm@0.44.5:
+    resolution: {integrity: sha512-jBe37K7d8ZSKptdKfakQFdeljtu3P2Cbo7tJoJSVZADzIKOBo9IAJPOmMsH2bZl90bZgh8FQlD8BjxXA/zuBkQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
-      '@cloudflare/workers-types': '>=3'
+      '@cloudflare/workers-types': '>=4'
       '@electric-sql/pglite': '>=0.2.0'
       '@libsql/client': '>=0.10.0'
       '@libsql/client-wasm': '>=0.10.0'
       '@neondatabase/serverless': '>=0.10.0'
       '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
-      '@planetscale/database': '>=1'
+      '@planetscale/database': '>=1.13'
       '@prisma/client': '*'
       '@tidbcloud/serverless': '*'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
-      '@types/react': '>=18'
       '@types/sql.js': '*'
+      '@upstash/redis': '>=1.34.7'
       '@vercel/postgres': '>=0.8.0'
       '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       expo-sqlite: '>=14.0.0'
+      gel: '>=2'
       knex: '*'
       kysely: '*'
       mysql2: '>=2'
       pg: '>=8'
       postgres: '>=3'
       prisma: '*'
-      react: '>=18'
       sql.js: '>=1'
       sqlite3: '>=5'
     peerDependenciesMeta:
@@ -1506,9 +1543,9 @@ packages:
         optional: true
       '@types/pg':
         optional: true
-      '@types/react':
-        optional: true
       '@types/sql.js':
+        optional: true
+      '@upstash/redis':
         optional: true
       '@vercel/postgres':
         optional: true
@@ -1519,6 +1556,8 @@ packages:
       bun-types:
         optional: true
       expo-sqlite:
+        optional: true
+      gel:
         optional: true
       knex:
         optional: true
@@ -1531,8 +1570,6 @@ packages:
       postgres:
         optional: true
       prisma:
-        optional: true
-      react:
         optional: true
       sql.js:
         optional: true
@@ -1946,6 +1983,10 @@ packages:
   is-weakset@2.0.4:
     resolution: {integrity: sha512-mfcwb6IzQyOKTs84CQMrOwW4gQcaTOAWJ0zzJCl2WSPDrWk/OzDaImWFH3djXhb24g4eudZfLRozAvPGw4d9hQ==}
     engines: {node: '>= 0.4'}
+
+  is-what@4.1.16:
+    resolution: {integrity: sha512-ZhMwEosbFJkA0YhFnNDgTM4ZxDRsS6HqTo7qsZM08fehyRYIYa0yHu5R6mgo1n/8MgaPBXiPimPD77baVFYg+A==}
+    engines: {node: '>=12.13'}
 
   isarray@2.0.5:
     resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
@@ -2409,6 +2450,10 @@ packages:
         optional: true
       babel-plugin-macros:
         optional: true
+
+  superjson@2.2.1:
+    resolution: {integrity: sha512-8iGv75BYOa0xRJHK5vRLEjE2H/i4lulTjzpUXic3Eg8akftYjkmQDa8JARQ42rlczXyFR3IeRoeFCc7RxHsYZA==}
+    engines: {node: '>=16'}
 
   supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
@@ -3688,6 +3733,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@trpc/server@11.5.1(typescript@5.9.2)':
+    dependencies:
+      typescript: 5.9.2
+
   '@types/bun@1.2.21(@types/react@19.1.0)':
     dependencies:
       bun-types: 1.2.21(@types/react@19.1.0)
@@ -4019,6 +4068,10 @@ snapshots:
 
   concat-map@0.0.1: {}
 
+  copy-anything@3.0.5:
+    dependencies:
+      is-what: 4.1.16
+
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -4111,20 +4164,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.36.4(@types/pg@8.15.5)(@types/react@19.1.0)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)(react@19.1.0):
+  drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7):
     optionalDependencies:
       '@types/pg': 8.15.5
-      '@types/react': 19.1.0
       bun-types: 1.2.21(@types/react@19.1.0)
       kysely: 0.28.7
       postgres: 3.4.7
-      react: 19.1.0
 
-  drizzle-seed@0.3.1(drizzle-orm@0.36.4(@types/pg@8.15.5)(@types/react@19.1.0)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)(react@19.1.0)):
+  drizzle-seed@0.3.1(drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)):
     dependencies:
       pure-rand: 6.1.0
     optionalDependencies:
-      drizzle-orm: 0.36.4(@types/pg@8.15.5)(@types/react@19.1.0)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)(react@19.1.0)
+      drizzle-orm: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
 
   dunder-proto@1.0.1:
     dependencies:
@@ -4690,6 +4741,8 @@ snapshots:
       call-bound: 1.0.4
       get-intrinsic: 1.3.0
 
+  is-what@4.1.16: {}
+
   isarray@2.0.5: {}
 
   isexe@2.0.0: {}
@@ -5217,6 +5270,10 @@ snapshots:
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+
+  superjson@2.2.1:
+    dependencies:
+      copy-anything: 3.0.5
 
   supports-color@7.2.0:
     dependencies:

@@ -13,3 +13,6 @@ export const auth = betterAuth({
   },
   plugins,
 });
+
+export type Auth = typeof auth;
+export type Session = typeof auth.$Infer.Session;

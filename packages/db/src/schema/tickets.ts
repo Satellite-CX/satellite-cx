@@ -1,11 +1,4 @@
-import {
-  integer,
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 import { createdAt, id, organizationId, updatedAt } from "./common";
 import { customers } from "./customers";

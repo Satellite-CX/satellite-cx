@@ -1,13 +1,12 @@
 import { sql } from "drizzle-orm";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import * as schema from "./schema";
-import { Role } from "./schema/auth";
- 
+
 type Database = PostgresJsDatabase<typeof schema>;
 
 interface CreateDrizzleOptions {
   organizationId: string;
-  role: Role;
+  role: string;
   admin: Database;
   client: Database;
 }
