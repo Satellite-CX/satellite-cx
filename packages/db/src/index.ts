@@ -8,8 +8,8 @@ import { createDrizzle } from "./create-drizzle";
 import * as schema from "./schema";
 
 export async function createDrizzleClient(
-  organizationId: string,
-  role: string
+  organizationId?: string,
+  role?: string
 ) {
   return await createDrizzle({
     organizationId,

@@ -5,8 +5,8 @@ import * as schema from "./schema";
 type Database = PostgresJsDatabase<typeof schema>;
 
 interface CreateDrizzleOptions {
-  organizationId: string;
-  role: string;
+  organizationId?: string;
+  role?: string;
   admin: Database;
   client: Database;
 }

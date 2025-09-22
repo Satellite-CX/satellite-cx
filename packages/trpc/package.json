@@ -10,9 +10,11 @@
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun --env-file=../../.env test --reporter=junit --reporter-outfile=./test-results.xml"
   },
   "dependencies": {
+    "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/validators": "workspace:*",
     "@trpc/server": "^11.4.3",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/bun": "^1.2.21",
     "typescript": "5.9.2"
   },
   "eslintConfig": {
