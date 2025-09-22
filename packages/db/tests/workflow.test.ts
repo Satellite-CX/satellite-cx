@@ -110,10 +110,18 @@ describe("Complete Organization Workflow Tests", () => {
     await adminDB.delete(sessions).where(eq(sessions.userId, memberUserId));
     await adminDB.delete(teamMembers).where(eq(teamMembers.teamId, teamId));
     await adminDB.delete(teams).where(eq(teams.id, teamId));
-    await adminDB.delete(members).where(eq(members.organizationId, organizationId));
-    await adminDB.delete(invitations).where(eq(invitations.organizationId, organizationId));
-    await adminDB.delete(organizationRoles).where(eq(organizationRoles.organizationId, organizationId));
-    await adminDB.delete(organizations).where(eq(organizations.id, organizationId));
+    await adminDB
+      .delete(members)
+      .where(eq(members.organizationId, organizationId));
+    await adminDB
+      .delete(invitations)
+      .where(eq(invitations.organizationId, organizationId));
+    await adminDB
+      .delete(organizationRoles)
+      .where(eq(organizationRoles.organizationId, organizationId));
+    await adminDB
+      .delete(organizations)
+      .where(eq(organizations.id, organizationId));
     await adminDB.delete(users).where(eq(users.id, ownerUserId));
     await adminDB.delete(users).where(eq(users.id, adminUserId));
     await adminDB.delete(users).where(eq(users.id, memberUserId));
@@ -135,11 +143,16 @@ describe("Complete Organization Workflow Tests", () => {
       const ownerMember = await adminDB
         .select()
         .from(members)
-        .where(and(eq(members.userId, ownerUserId), eq(members.organizationId, organizationId)))
+        .where(
+          and(
+            eq(members.userId, ownerUserId),
+            eq(members.organizationId, organizationId)
+          )
+        )
         .limit(1);
 
       expect(ownerMember).toHaveLength(1);
-      expect(ownerMember[0].role).toBe("owner");
+      expect(ownerMember[0]!.role).toBe("owner");
 
       // Clean up
       await adminDB.delete(members).where(eq(members.id, ownerMemberId));
@@ -193,12 +206,14 @@ describe("Complete Organization Workflow Tests", () => {
         .orderBy(organizationRoles.role);
 
       expect(roles).toHaveLength(3);
-      expect(roles[0].role).toBe("admin");
-      expect(roles[1].role).toBe("member");
-      expect(roles[2].role).toBe("owner");
+      expect(roles[0]!.role).toBe("admin");
+      expect(roles[1]!.role).toBe("member");
+      expect(roles[2]!.role).toBe("owner");
 
       // Clean up
-      await adminDB.delete(organizationRoles).where(eq(organizationRoles.organizationId, organizationId));
+      await adminDB
+        .delete(organizationRoles)
+        .where(eq(organizationRoles.organizationId, organizationId));
     });
   });
 
@@ -220,8 +235,8 @@ describe("Complete Organization Workflow Tests", () => {
         .limit(1);
 
       expect(adminMember).toHaveLength(1);
-      expect(adminMember[0].role).toBe("admin");
-      expect(adminMember[0].userId).toBe(adminUserId);
+      expect(adminMember[0]!.role).toBe("admin");
+      expect(adminMember[0]!.userId).toBe(adminUserId);
 
       // Clean up
       await adminDB.delete(members).where(eq(members.id, adminMemberId));
@@ -244,8 +259,8 @@ describe("Complete Organization Workflow Tests", () => {
         .limit(1);
 
       expect(memberMember).toHaveLength(1);
-      expect(memberMember[0].role).toBe("member");
-      expect(memberMember[0].userId).toBe(memberUserId);
+      expect(memberMember[0]!.role).toBe("member");
+      expect(memberMember[0]!.userId).toBe(memberUserId);
 
       // Clean up
       await adminDB.delete(members).where(eq(members.id, memberMemberId));
@@ -273,7 +288,7 @@ describe("Complete Organization Workflow Tests", () => {
         .where(eq(members.id, memberId))
         .limit(1);
 
-      expect(updatedMember[0].role).toBe("admin");
+      expect(updatedMember[0]!.role).toBe("admin");
 
       // Clean up
       await adminDB.delete(members).where(eq(members.id, memberId));
@@ -322,8 +337,8 @@ describe("Complete Organization Workflow Tests", () => {
         .limit(1);
 
       expect(invitation).toHaveLength(1);
-      expect(invitation[0].email).toMatch(/^newuser-.*@example\.com$/);
-      expect(invitation[0].status).toBe("pending");
+      expect(invitation[0]!.email).toMatch(/^newuser-.*@example\.com$/);
+      expect(invitation[0]!.status).toBe("pending");
 
       // Clean up
       await adminDB.delete(invitations).where(eq(invitations.id, invitationId));
@@ -376,7 +391,7 @@ describe("Complete Organization Workflow Tests", () => {
         .limit(1);
 
       expect(newMember).toHaveLength(1);
-      expect(newMember[0].role).toBe("member");
+      expect(newMember[0]!.role).toBe("member");
 
       // Clean up
       await adminDB.delete(members).where(eq(members.id, newMemberId));
@@ -410,7 +425,7 @@ describe("Complete Organization Workflow Tests", () => {
         .where(eq(invitations.id, invitationId))
         .limit(1);
 
-      expect(rejectedInvitation[0].status).toBe("rejected");
+      expect(rejectedInvitation[0]!.status).toBe("rejected");
 
       // Clean up
       await adminDB.delete(invitations).where(eq(invitations.id, invitationId));
@@ -442,7 +457,7 @@ describe("Complete Organization Workflow Tests", () => {
         .where(eq(invitations.id, invitationId))
         .limit(1);
 
-      expect(cancelledInvitation[0].status).toBe("cancelled");
+      expect(cancelledInvitation[0]!.status).toBe("cancelled");
 
       // Clean up
       await adminDB.delete(invitations).where(eq(invitations.id, invitationId));
@@ -466,8 +481,8 @@ describe("Complete Organization Workflow Tests", () => {
         .limit(1);
 
       expect(teamMember).toHaveLength(1);
-      expect(teamMember[0].teamId).toBe(teamId);
-      expect(teamMember[0].userId).toBe(memberUserId);
+      expect(teamMember[0]!.teamId).toBe(teamId);
+      expect(teamMember[0]!.userId).toBe(memberUserId);
 
       // Clean up
       await adminDB.delete(teamMembers).where(eq(teamMembers.id, teamMemberId));
@@ -518,7 +533,7 @@ describe("Complete Organization Workflow Tests", () => {
         .orderBy(teamMembers.createdAt);
 
       expect(teamMembersList).toHaveLength(2);
-      const userIds = teamMembersList.map(tm => tm.userId);
+      const userIds = teamMembersList.map((tm) => tm.userId);
       expect(userIds).toContain(memberUserId);
       expect(userIds).toContain(adminUserId);
 
@@ -544,9 +559,8 @@ describe("Complete Organization Workflow Tests", () => {
         .where(eq(sessions.id, sessionId))
         .limit(1);
 
-      expect(session[0].activeOrganizationId).toBe(organizationId);
+      expect(session[0]!.activeOrganizationId).toBe(organizationId);
 
-      // Clean up
       await adminDB.delete(sessions).where(eq(sessions.id, sessionId));
     });
 
@@ -567,9 +581,8 @@ describe("Complete Organization Workflow Tests", () => {
         .where(eq(sessions.id, sessionId))
         .limit(1);
 
-      expect(session[0].activeTeamId).toBe(teamId);
+      expect(session[0]!.activeTeamId).toBe(teamId);
 
-      // Clean up
       await adminDB.delete(sessions).where(eq(sessions.id, sessionId));
     });
 
@@ -595,7 +608,7 @@ describe("Complete Organization Workflow Tests", () => {
         .where(eq(sessions.id, sessionId))
         .limit(1);
 
-      expect(updatedSession[0].activeOrganizationId).toBe(newOrgId);
+      expect(updatedSession[0]!.activeOrganizationId).toBe(newOrgId);
 
       // Clean up
       await adminDB.delete(sessions).where(eq(sessions.id, sessionId));
@@ -716,9 +729,15 @@ describe("Complete Organization Workflow Tests", () => {
 
       // Clean up everything
       await adminDB.delete(teamMembers).where(eq(teamMembers.teamId, teamId));
-      await adminDB.delete(members).where(eq(members.organizationId, organizationId));
-      await adminDB.delete(invitations).where(eq(invitations.organizationId, organizationId));
-      await adminDB.delete(organizationRoles).where(eq(organizationRoles.organizationId, organizationId));
+      await adminDB
+        .delete(members)
+        .where(eq(members.organizationId, organizationId));
+      await adminDB
+        .delete(invitations)
+        .where(eq(invitations.organizationId, organizationId));
+      await adminDB
+        .delete(organizationRoles)
+        .where(eq(organizationRoles.organizationId, organizationId));
     });
   });
 });

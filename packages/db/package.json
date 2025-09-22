@@ -13,6 +13,7 @@
     "dev": "drizzle-kit studio",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate && pnpm prepare-rls",
+    "migrate-auth": "npx @better-auth/cli@latest migrate --config=./src/lib/auth.ts",
     "push": "drizzle-kit push",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
