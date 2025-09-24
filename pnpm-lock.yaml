@@ -39,9 +39,6 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../tooling/typescript-config
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
       '@types/react':
         specifier: 19.1.0
         version: 19.1.0
@@ -112,10 +109,10 @@ importers:
         version: 17.2.2
       drizzle-orm:
         specifier: ^0.44.5
-        version: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
+        version: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.22(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
       drizzle-seed:
         specifier: ^0.3.1
-        version: 0.3.1(drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7))
+        version: 0.3.1(drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.22(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7))
       postgres:
         specifier: ^3.4.5
         version: 3.4.7
@@ -130,11 +127,8 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/typescript-config
       '@types/bun':
-        specifier: ^1.2.21
-        version: 1.2.21(@types/react@19.1.0)
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
+        specifier: latest
+        version: 1.2.22(@types/react@19.1.0)
       '@types/pg':
         specifier: ^8.11.10
         version: 8.15.5
@@ -170,11 +164,14 @@ importers:
         version: 11.5.1(typescript@5.9.2)
       drizzle-orm:
         specifier: ^0.44.5
-        version: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
+        version: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.22(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
       superjson:
         specifier: 2.2.1
         version: 2.2.1
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^10.0.0
+        version: 10.0.0
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint-config
@@ -182,7 +179,7 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/typescript-config
       '@types/bun':
-        specifier: ^1.2.21
+        specifier: latest
         version: 1.2.22(@types/react@19.1.0)
       typescript:
         specifier: 5.9.2
@@ -203,9 +200,6 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../tooling/typescript-config
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
       '@types/react':
         specifier: 19.1.0
         version: 19.1.0
@@ -4208,18 +4202,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7):
+  drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.22(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7):
     optionalDependencies:
       '@types/pg': 8.15.5
-      bun-types: 1.2.21(@types/react@19.1.0)
+      bun-types: 1.2.22(@types/react@19.1.0)
       kysely: 0.28.7
       postgres: 3.4.7
 
-  drizzle-seed@0.3.1(drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)):
+  drizzle-seed@0.3.1(drizzle-orm@0.44.5(@types/pg@8.15.5)(bun-types@1.2.22(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)):
     dependencies:
       pure-rand: 6.1.0
     optionalDependencies:
-      drizzle-orm: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.21(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
+      drizzle-orm: 0.44.5(@types/pg@8.15.5)(bun-types@1.2.22(@types/react@19.1.0))(kysely@0.28.7)(postgres@3.4.7)
 
   dunder-proto@1.0.1:
     dependencies:
