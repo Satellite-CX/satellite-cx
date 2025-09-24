@@ -1,17 +1,17 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { reset, seed } from "drizzle-seed";
 import { nanoid } from "nanoid";
 import { createDrizzleClient } from "../src";
 import { adminDB } from "../src/client";
 import * as schema from "../src/schema";
+import { resetDatabase, seedDatabase } from "../src/utils";
 
 describe("RLS Policies", () => {
   beforeAll(async () => {
-    await seed(adminDB, schema);
+    await seedDatabase();
   });
 
   afterAll(async () => {
-    await reset(adminDB, schema);
+    await resetDatabase();
   });
 
   describe("Organization isolation", () => {
