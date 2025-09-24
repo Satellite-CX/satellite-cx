@@ -19,6 +19,8 @@ export const users = pgTable("users", {
     .notNull(),
 });
 
+export type User = typeof users.$inferSelect;
+
 export const sessions = pgTable("sessions", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -119,6 +121,8 @@ export const teams = pgTable("teams", {
   ),
 });
 
+export type Team = typeof teams.$inferSelect;
+
 export const teamMembers = pgTable("team_members", {
   id: text("id").primaryKey(),
   teamId: text("team_id")
@@ -130,6 +134,8 @@ export const teamMembers = pgTable("team_members", {
   createdAt: timestamp("created_at"),
 });
 
+export type TeamMember = typeof teamMembers.$inferSelect;
+
 export const organizations = pgTable("organizations", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -138,6 +144,8 @@ export const organizations = pgTable("organizations", {
   createdAt: timestamp("created_at").notNull(),
   metadata: text("metadata"),
 });
+
+export type Organization = typeof organizations.$inferSelect;
 
 export const members = pgTable("members", {
   id: text("id").primaryKey(),
@@ -150,6 +158,8 @@ export const members = pgTable("members", {
   role: text("role").default("member").notNull(),
   createdAt: timestamp("created_at").notNull(),
 });
+
+export type Member = typeof members.$inferSelect;
 
 export const invitations = pgTable("invitations", {
   id: text("id").primaryKey(),

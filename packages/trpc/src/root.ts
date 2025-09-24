@@ -3,14 +3,14 @@ import type { DB } from "@repo/db";
 import { initTRPC } from "@trpc/server";
 
 interface TRPCContext {
-  session: Session | null;
+  headers: Headers;
   db: DB;
 }
 
 export const createTRPCContext = (params: TRPCContext) => {
-  const { session, db } = params;
+  const { headers, db } = params;
   return {
-    session,
+    headers,
     db,
   };
 };

@@ -7,11 +7,17 @@ import { adminDB, clientDB } from "./client";
 import { createDrizzle } from "./create-drizzle";
 import * as schema from "./schema";
 
-export async function createDrizzleClient(
-  organizationId?: string,
-  role?: string,
-  userId?: string
-) {
+interface CreateDrizzleClientOptions {
+  organizationId?: string;
+  role?: string;
+  userId?: string;
+}
+
+export async function createDrizzleClient({
+  organizationId,
+  role,
+  userId,
+}: CreateDrizzleClientOptions = {}) {
   return await createDrizzle({
     organizationId,
     role,

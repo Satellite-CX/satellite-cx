@@ -13,7 +13,9 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [apiKey, organization],
+  advanced: {
+    cookiePrefix: "scx",
+  },
 });
 
-export type Auth = typeof auth;
 export type Session = typeof auth.$Infer.Session;
