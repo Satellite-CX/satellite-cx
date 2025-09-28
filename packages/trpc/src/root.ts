@@ -1,4 +1,3 @@
-import { Session } from "@repo/auth";
 import type { DB } from "@repo/db";
 import { initTRPC } from "@trpc/server";
 

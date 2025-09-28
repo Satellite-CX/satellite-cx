@@ -1,6 +1,6 @@
+import { auth } from "@repo/auth";
 import { TRPCError } from "@trpc/server";
 import { t } from "./root";
-import { auth } from "@repo/auth";
 
 export const protectedMiddleware = t.middleware(async ({ ctx, next }) => {
   const session = await auth.api.getSession({
@@ -12,6 +12,19 @@ export const protectedMiddleware = t.middleware(async ({ ctx, next }) => {
       message: "Unauthorized",
     });
   }
+  const activeOrganizationId = session.session.activeOrganizationId;
+  if (!activeOrganizationId) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Active organization is required",
+    });
+  }
 
-  return next({ ctx: { ...ctx, session } });
+  return next({
+    ctx: {
+      ...ctx,
+      session,
+      activeOrganizationId,
+    },
+  });
 });
