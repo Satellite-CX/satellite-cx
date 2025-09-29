@@ -5,16 +5,34 @@ import { members, organizations, teamMembers, teams } from "@repo/db/schema";
 import { API_KEY_PREFIX } from "../../auth/src/plugins/api-key";
 
 export async function generateTestData() {
+  const password = faker.internet.password();
   const signup = await auth.api.signUpEmail({
     body: {
       name: faker.person.fullName(),
       email: faker.internet.email(),
-      password: faker.internet.password(),
+      password: password,
       image: faker.image.url(),
     },
+    asResponse: true,
   });
 
-  const { user } = signup;
+  const signupResponse = await signup.json();
+  const { user } = signupResponse;
+
+  const setCookieHeader = signup.headers.get("set-cookie");
+  if (!setCookieHeader) {
+    throw new Error("No set-cookie header in signup response");
+  }
+
+  const sessionToken = decodeURIComponent(
+    setCookieHeader.split(";")![0]!.split("=")[1]!
+  );
+
+  const session = await auth.api.getSession({
+    headers: new Headers({
+      cookie: `scx.session_token=${sessionToken}`,
+    }),
+  });
 
   const organization = await adminDB
     .insert(organizations)
@@ -71,5 +89,15 @@ export async function generateTestData() {
     },
   });
 
-  return { user, organization, member, team, teamMember, apiKey: apiKey.key };
+  return {
+    user,
+    organization,
+    member,
+    team,
+    teamMember,
+    apiKey: apiKey.key,
+    password,
+    session,
+    token: sessionToken,
+  };
 }

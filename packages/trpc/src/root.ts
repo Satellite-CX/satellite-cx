@@ -3,14 +3,12 @@ import { initTRPC } from "@trpc/server";
 
 interface TRPCContext {
   headers: Headers;
-  db: DB;
 }
 
 export const createTRPCContext = (params: TRPCContext) => {
-  const { headers, db } = params;
+  const { headers } = params;
   return {
     headers,
-    db,
   };
 };
 
