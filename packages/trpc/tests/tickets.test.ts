@@ -1,5 +1,5 @@
 import { resetDatabase, seedDatabase } from "@repo/db/utils";
-import { afterAll, beforeAll, describe, it } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { createTrpcCaller } from "../src";
 import { generateTestData } from "./generate-test-data";
 
@@ -17,12 +17,13 @@ describe("Tickets", () => {
 
   it("should return a list of tickets", async () => {
     const headers = new Headers({
-      "x-api-key": testData.apiKey,
+      "x-api-key": testData.apiKey.key,
     });
     const caller = createTrpcCaller({
       headers,
     });
     const tickets = await caller.tickets.list();
-    console.log(tickets);
+    expect(tickets).toBeDefined();
+    expect(Array.isArray(tickets)).toBe(true);
   });
 });

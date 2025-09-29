@@ -83,7 +83,7 @@ export async function generateTestData() {
   const apiKey = await auth.api.createApiKey({
     body: {
       name: faker.lorem.word(),
-      expiresIn: 60 * 60 * 24 * 7,
+      expiresIn: 60 * 60 * 24 * 7, // 7 days
       userId: user!.id,
       prefix: API_KEY_PREFIX,
       metadata: {
@@ -98,7 +98,7 @@ export async function generateTestData() {
     member,
     team,
     teamMember,
-    apiKey: apiKey.key,
+    apiKey,
     password,
     session,
     token: sessionToken,

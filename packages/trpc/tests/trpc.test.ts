@@ -1,15 +1,32 @@
 import { auth } from "@repo/auth";
 import { resetDatabase, seedDatabase } from "@repo/db/utils";
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  setSystemTime,
+} from "bun:test";
 import { createTrpcCaller } from "../src";
 import { generateTestData } from "./generate-test-data";
+import { adminDB } from "@repo/db/client";
+import { apikeys } from "@repo/db/schema";
+import { eq } from "drizzle-orm";
 
-describe("Session Management", () => {
+const EIGHT_DAYS = 8 * 24 * 60 * 60 * 1000;
+
+describe("Authentication Management", () => {
   let testData: Awaited<ReturnType<typeof generateTestData>>;
 
   beforeAll(async () => {
     await seedDatabase();
     testData = await generateTestData();
+  });
+
+  afterEach(() => {
+    setSystemTime();
   });
 
   afterAll(async () => {
@@ -56,18 +73,69 @@ describe("Session Management", () => {
     expect(session.activeOrganizationId).toBe(testData.organization.id);
   });
 
-  it("should get session using api key", async () => {
-    const headers = new Headers({
-      "x-api-key": testData.apiKey,
+  describe("API Key Authentication", () => {
+    it("should get session using api key", async () => {
+      const headers = new Headers({
+        "x-api-key": testData.apiKey.key,
+      });
+
+      const caller = createTrpcCaller({
+        headers,
+      });
+
+      const session = await caller.session();
+      expect(session).toBeDefined();
+      expect(session.user.id).toBe(testData.user.id);
+      expect(session.activeOrganizationId).toBe(testData.organization.id);
     });
 
-    const caller = createTrpcCaller({
-      headers,
+    it("should throw when calling a protected route with an invalid api key", async () => {
+      const headers = new Headers({
+        "x-api-key": "invalid",
+      });
+
+      const caller = createTrpcCaller({
+        headers,
+      });
+
+      expect(caller.session()).rejects.toThrow("Invalid API key.");
     });
 
-    const session = await caller.session();
-    expect(session).toBeDefined();
-    expect(session.user.id).toBe(testData.user.id);
-    expect(session.activeOrganizationId).toBe(testData.organization.id);
+    it("should throw when calling a protected route with an expired api key", async () => {
+      const futureDate = new Date(Date.now() + EIGHT_DAYS);
+      setSystemTime(futureDate);
+
+      const headers = new Headers({
+        "x-api-key": testData.apiKey.key,
+      });
+
+      const caller = createTrpcCaller({
+        headers,
+      });
+
+      expect(caller.session()).rejects.toThrow("API Key has expired");
+    });
+
+    it("should throw when calling a protected route with an disabled api key", async () => {
+      await adminDB
+        .update(apikeys)
+        .set({ enabled: false })
+        .where(eq(apikeys.id, testData.apiKey.id))
+        .returning();
+
+      const headers = new Headers({
+        "x-api-key": testData.apiKey.key,
+      });
+
+      const caller = createTrpcCaller({
+        headers,
+      });
+
+      expect(caller.session()).rejects.toThrow("Invalid API key.");
+      await adminDB
+        .update(apikeys)
+        .set({ enabled: true })
+        .where(eq(apikeys.id, testData.apiKey.id));
+    });
   });
 });
