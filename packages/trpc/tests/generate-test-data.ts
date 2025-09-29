@@ -86,6 +86,9 @@ export async function generateTestData() {
       expiresIn: 60 * 60 * 24 * 7,
       userId: user!.id,
       prefix: API_KEY_PREFIX,
+      metadata: {
+        organizationId: organization!.id,
+      },
     },
   });
 

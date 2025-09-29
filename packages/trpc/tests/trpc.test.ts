@@ -1,25 +1,15 @@
 import { auth } from "@repo/auth";
 import { resetDatabase, seedDatabase } from "@repo/db/utils";
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { createTrpcCaller, TRPCCaller } from "../src";
+import { createTrpcCaller } from "../src";
 import { generateTestData } from "./generate-test-data";
 
 describe("Session Management", () => {
-  let caller: TRPCCaller;
   let testData: Awaited<ReturnType<typeof generateTestData>>;
 
   beforeAll(async () => {
     await seedDatabase();
     testData = await generateTestData();
-
-    const headers = new Headers({
-      cookie: `scx.session_token=${testData.token}`,
-      // "x-api-key": testData.apiKey,
-    });
-
-    caller = createTrpcCaller({
-      headers,
-    });
   });
 
   afterAll(async () => {
@@ -51,8 +41,33 @@ describe("Session Management", () => {
   });
 
   it("should return a session when calling a protected route", async () => {
+    const headers = new Headers({
+      cookie: `scx.session_token=${testData.token}`,
+    });
+
+    const caller = createTrpcCaller({
+      headers,
+    });
+
+    const session = await caller.session();
+
+    expect(session).toBeDefined();
+    expect(session.user.id).toBe(testData.user.id);
+    expect(session.activeOrganizationId).toBe(testData.organization.id);
+  });
+
+  it("should get session using api key", async () => {
+    const headers = new Headers({
+      "x-api-key": testData.apiKey,
+    });
+
+    const caller = createTrpcCaller({
+      headers,
+    });
+
     const session = await caller.session();
     expect(session).toBeDefined();
     expect(session.user.id).toBe(testData.user.id);
+    expect(session.activeOrganizationId).toBe(testData.organization.id);
   });
 });

@@ -6,7 +6,7 @@ export const ticketsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.rls((tx) =>
       tx.query.tickets.findMany({
-        where: eq(tickets.organizationId, ctx.activeOrganizationId),
+        where: eq(tickets.organizationId, ctx.session.activeOrganizationId),
       })
     );
   }),

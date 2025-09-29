@@ -4,4 +4,5 @@ export const API_KEY_PREFIX = "scx_";
 
 export const apiKey = apiKeyPlugin({
   defaultPrefix: API_KEY_PREFIX,
+  enableMetadata: true,
 });

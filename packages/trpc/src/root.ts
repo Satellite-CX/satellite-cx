@@ -1,4 +1,3 @@
-import type { DB } from "@repo/db";
 import { initTRPC } from "@trpc/server";
 
 interface TRPCContext {

@@ -1,7 +1,8 @@
 import { auth } from "@repo/auth";
+import { createDrizzleClient } from "@repo/db";
 import { TRPCError } from "@trpc/server";
 import { t } from "./root";
-import { createDrizzleClient } from "@repo/db";
+import { authenticateWithApiKey, authenticateWithSession } from "./utils";
 
 export const protectedMiddleware = t.middleware(async ({ ctx, next }) => {
   const session = await auth.api.getSession({
@@ -14,25 +15,27 @@ export const protectedMiddleware = t.middleware(async ({ ctx, next }) => {
       message: "Unauthorized",
     });
   }
-  const activeOrganizationId = session.session.activeOrganizationId;
-  if (!activeOrganizationId) {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Active organization is required",
-    });
-  }
+
+  const headersApiKey = ctx.headers.get("x-api-key");
+
+  const { organizationId, member } = headersApiKey
+    ? await authenticateWithApiKey(headersApiKey)
+    : await authenticateWithSession(session);
 
   const db = await createDrizzleClient({
-    organizationId: activeOrganizationId,
-    role: session.member?.role,
+    organizationId,
+    role: member.role,
     userId: session.user.id,
   });
 
   return next({
     ctx: {
       ...ctx,
-      session,
-      activeOrganizationId,
+      session: {
+        ...session,
+        member,
+        activeOrganizationId: organizationId,
+      },
       db,
     },
   });
