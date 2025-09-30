@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { eq, and, desc } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { and, eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { adminDB } from "../src/client";
 import {
-  users,
-  organizations,
-  members,
   invitations,
-  teams,
-  teamMembers,
+  members,
   organizationRoles,
+  organizations,
   sessions,
+  teamMembers,
+  teams,
+  users,
 } from "../src/schema";
-import { nanoid } from "nanoid";
 
 describe("Complete Organization Workflow Tests", () => {
   let ownerUserId: string;

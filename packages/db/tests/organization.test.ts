@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { eq, and, desc } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { adminDB } from "../src/client";
 import {
-  users,
-  organizations,
-  members,
   invitations,
-  teams,
-  teamMembers,
+  members,
   organizationRoles,
+  organizations,
   sessions,
+  teamMembers,
+  teams,
+  users,
 } from "../src/schema";
-import { nanoid } from "nanoid";
 
 describe("Organization Schema Tests", () => {
   let testUserId: string;
@@ -53,10 +53,18 @@ describe("Organization Schema Tests", () => {
     // Clean up test data
     await adminDB.delete(teamMembers).where(eq(teamMembers.teamId, testTeamId));
     await adminDB.delete(teams).where(eq(teams.id, testTeamId));
-    await adminDB.delete(members).where(eq(members.organizationId, testOrganizationId));
-    await adminDB.delete(invitations).where(eq(invitations.organizationId, testOrganizationId));
-    await adminDB.delete(organizationRoles).where(eq(organizationRoles.organizationId, testOrganizationId));
-    await adminDB.delete(organizations).where(eq(organizations.id, testOrganizationId));
+    await adminDB
+      .delete(members)
+      .where(eq(members.organizationId, testOrganizationId));
+    await adminDB
+      .delete(invitations)
+      .where(eq(invitations.organizationId, testOrganizationId));
+    await adminDB
+      .delete(organizationRoles)
+      .where(eq(organizationRoles.organizationId, testOrganizationId));
+    await adminDB
+      .delete(organizations)
+      .where(eq(organizations.id, testOrganizationId));
     await adminDB.delete(users).where(eq(users.id, testUserId));
   });
 
@@ -176,13 +184,11 @@ describe("Organization Schema Tests", () => {
       await adminDB.delete(members).where(eq(members.id, memberId));
     });
 
-    
-
     it("should list members of an organization", async () => {
       // Add multiple members
       const member1Id = nanoid();
       const member2Id = nanoid();
-      
+
       await adminDB.insert(members).values([
         {
           id: member1Id,
@@ -207,12 +213,14 @@ describe("Organization Schema Tests", () => {
         .orderBy(members.createdAt);
 
       expect(result).toHaveLength(2);
-      const roles = result.map(r => r.role);
+      const roles = result.map((r) => r.role);
       expect(roles).toContain("member");
       expect(roles).toContain("admin");
 
       // Clean up
-      await adminDB.delete(members).where(eq(members.organizationId, testOrganizationId));
+      await adminDB
+        .delete(members)
+        .where(eq(members.organizationId, testOrganizationId));
     });
 
     it("should update member role", async () => {
@@ -421,14 +429,16 @@ describe("Organization Schema Tests", () => {
         .where(eq(invitations.organizationId, testOrganizationId));
 
       expect(result).toHaveLength(2);
-      const emails = result.map(r => r.email);
-      const roles = result.map(r => r.role);
+      const emails = result.map((r) => r.email);
+      const roles = result.map((r) => r.role);
       expect(emails).toHaveLength(2);
       expect(roles).toContain("member");
       expect(roles).toContain("admin");
 
       // Clean up
-      await adminDB.delete(invitations).where(eq(invitations.organizationId, testOrganizationId));
+      await adminDB
+        .delete(invitations)
+        .where(eq(invitations.organizationId, testOrganizationId));
     });
   });
 
@@ -569,7 +579,9 @@ describe("Organization Schema Tests", () => {
       expect(result).toHaveLength(2);
 
       // Clean up
-      await adminDB.delete(teamMembers).where(eq(teamMembers.teamId, testTeamId));
+      await adminDB
+        .delete(teamMembers)
+        .where(eq(teamMembers.teamId, testTeamId));
     });
   });
 
@@ -591,10 +603,14 @@ describe("Organization Schema Tests", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]!.role).toBe("custom-role");
-      expect(JSON.parse(result[0]!.permission)).toEqual({ project: ["create", "update"] });
+      expect(JSON.parse(result[0]!.permission)).toEqual({
+        project: ["create", "update"],
+      });
 
       // Clean up
-      await adminDB.delete(organizationRoles).where(eq(organizationRoles.id, roleId));
+      await adminDB
+        .delete(organizationRoles)
+        .where(eq(organizationRoles.id, roleId));
     });
 
     it("should update an organization role", async () => {
@@ -606,7 +622,9 @@ describe("Organization Schema Tests", () => {
         permission: JSON.stringify({ project: ["create"] }),
       });
 
-      const updatedPermission = JSON.stringify({ project: ["create", "update", "delete"] });
+      const updatedPermission = JSON.stringify({
+        project: ["create", "update", "delete"],
+      });
       await adminDB
         .update(organizationRoles)
         .set({ permission: updatedPermission })
@@ -618,10 +636,14 @@ describe("Organization Schema Tests", () => {
         .where(eq(organizationRoles.id, roleId))
         .limit(1);
 
-      expect(JSON.parse(result[0]!.permission)).toEqual({ project: ["create", "update", "delete"] });
+      expect(JSON.parse(result[0]!.permission)).toEqual({
+        project: ["create", "update", "delete"],
+      });
 
       // Clean up
-      await adminDB.delete(organizationRoles).where(eq(organizationRoles.id, roleId));
+      await adminDB
+        .delete(organizationRoles)
+        .where(eq(organizationRoles.id, roleId));
     });
 
     it("should delete an organization role", async () => {
@@ -633,7 +655,9 @@ describe("Organization Schema Tests", () => {
         permission: JSON.stringify({ project: ["create"] }),
       });
 
-      await adminDB.delete(organizationRoles).where(eq(organizationRoles.id, roleId));
+      await adminDB
+        .delete(organizationRoles)
+        .where(eq(organizationRoles.id, roleId));
 
       const result = await adminDB
         .select()
@@ -669,12 +693,14 @@ describe("Organization Schema Tests", () => {
         .orderBy(organizationRoles.createdAt);
 
       expect(result).toHaveLength(2);
-      const roles = result.map(r => r.role);
+      const roles = result.map((r) => r.role);
       expect(roles).toContain("role-1");
       expect(roles).toContain("role-2");
 
       // Clean up
-      await adminDB.delete(organizationRoles).where(eq(organizationRoles.organizationId, testOrganizationId));
+      await adminDB
+        .delete(organizationRoles)
+        .where(eq(organizationRoles.organizationId, testOrganizationId));
     });
   });
 

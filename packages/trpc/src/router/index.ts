@@ -6,7 +6,7 @@ export const appRouter = router({
   session: protectedProcedure.query(async ({ ctx }) => {
     return ctx.session;
   }),
-  health: publicProcedure.query(async ({ ctx }) => {
+  health: publicProcedure.query(async () => {
     return {
       status: "ok",
     };

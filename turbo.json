@@ -1,11 +1,23 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
+  "globalEnv": ["NODE_ENV"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "build/**"]
+      "outputs": [".next/**", "!.next/cache/**", "build/**"],
+      "env": [
+        "DATABASE_URL",
+        "DISABLE_RLS",
+        "RLS_CLIENT_DATABASE_URL",
+        "POSTGRES_RLS_USER",
+        "POSTGRES_RLS_PASSWORD",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "PORT",
+        "CORS_ORIGINS"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -15,7 +27,18 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "DATABASE_URL",
+        "DISABLE_RLS",
+        "RLS_CLIENT_DATABASE_URL",
+        "POSTGRES_RLS_USER",
+        "POSTGRES_RLS_PASSWORD",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "PORT",
+        "CORS_ORIGINS"
+      ]
     },
     "test": {
       "outputs": ["test-results.xml"]

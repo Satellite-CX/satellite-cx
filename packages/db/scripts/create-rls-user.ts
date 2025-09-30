@@ -21,8 +21,8 @@ try {
 
   console.log("RLS user created:", res);
   process.exit(0);
-} catch (error: any) {
-  if (error.code === "42710") {
+} catch (error: unknown) {
+  if (error instanceof Error && error.message.includes("42710")) {
     // User already exists, just grant privileges
     console.log("RLS user already exists, granting privileges...");
     await adminDB.execute(sql`

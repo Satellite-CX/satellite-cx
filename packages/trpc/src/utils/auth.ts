@@ -35,7 +35,7 @@ export async function authenticateWithApiKey(key: string): Promise<AuthResult> {
   const member = await adminDB.query.members.findFirst({
     where: and(
       eq(members.organizationId, organizationId),
-      eq(members.userId, data.key?.userId!)
+      eq(members.userId, data.key!.userId)
     ),
   });
 
