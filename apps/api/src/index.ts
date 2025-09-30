@@ -38,22 +38,7 @@ app.use(
   "/trpc/*",
   trpcServer({
     router: appRouter,
-    createContext: async (opts, c) => {
-      const session = await auth.api.getSession({
-        headers: c.req.raw.headers,
-      });
-
-      if (!session) {
-        return {
-          headers: opts.req.headers,
-          session: null,
-        };
-      }
-
-      const db = await createDrizzleClient(session);
-
-      return createTRPCContext({ opts, session, db });
-    },
+    createContext: async (opts, c) => createTRPCContext({ headers: c.req.raw.headers }),
   })
 );
 

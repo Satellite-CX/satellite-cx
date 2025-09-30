@@ -15,7 +15,7 @@
     "migrate": "drizzle-kit migrate && pnpm prepare-rls",
     "push": "drizzle-kit push && pnpm prepare-rls",
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "bun --env-file=../../.env test --reporter=junit --reporter-outfile=./test-results.xml",
     "prepare-rls": "bun run create-rls-user && bun run apply-rls-policies",
     "create-rls-user": "bun --env-file=../../.env run scripts/create-rls-user.ts",
