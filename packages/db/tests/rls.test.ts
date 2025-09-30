@@ -46,11 +46,11 @@ describe("RLS Policies", () => {
         createdAt: new Date(),
       });
 
-      const { rls } = await createDrizzleClient(
-        organization.id,
-        "member",
-        user.id
-      );
+      const { rls } = await createDrizzleClient({
+        organizationId: organization.id,
+        role: "member",
+        userId: user.id,
+      });
 
       const result = await rls((tx) => tx.query.organizations.findMany());
 
@@ -108,11 +108,11 @@ describe("RLS Policies", () => {
         createdAt: new Date(),
       });
 
-      const { rls } = await createDrizzleClient(
-        organization.id,
-        "member",
-        user1.id
-      );
+      const { rls } = await createDrizzleClient({
+        organizationId: organization.id,
+        role: "member",
+        userId: user1.id,
+      });
 
       const result = await rls((tx) => tx.query.members.findMany());
 
@@ -163,11 +163,11 @@ describe("RLS Policies", () => {
         .returning()
         .then((rows) => rows[0]!);
 
-      const { rls } = await createDrizzleClient(
-        organization.id,
-        "member",
-        user.id
-      );
+      const { rls } = await createDrizzleClient({
+        organizationId: organization.id,
+        role: "member",
+        userId: user.id,
+      });
 
       const result = await rls((tx) => tx.query.teams.findMany());
 
@@ -219,11 +219,11 @@ describe("RLS Policies", () => {
         .returning()
         .then((rows) => rows[0]!);
 
-      const { rls } = await createDrizzleClient(
-        organization.id,
-        "member",
-        user.id
-      );
+      const { rls } = await createDrizzleClient({
+        organizationId: organization.id,
+        role: "member",
+        userId: user.id,
+      });
 
       const result = await rls((tx) => tx.query.customers.findMany());
 
@@ -288,11 +288,11 @@ describe("RLS Policies", () => {
         .returning()
         .then((rows) => rows[0]!);
 
-      const { rls } = await createDrizzleClient(
-        organization.id,
-        "member",
-        user.id
-      );
+      const { rls } = await createDrizzleClient({
+        organizationId: organization.id,
+        role: "member",
+        userId: user.id,
+      });
 
       const result = await rls((tx) => tx.query.tickets.findMany());
 

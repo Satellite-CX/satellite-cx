@@ -25,17 +25,20 @@ ALTER TABLE priority ENABLE ROW LEVEL SECURITY;
 
 -- Organizations: Users can only access organizations they belong to
 -- Note: This policy allows users to see organizations they belong to
--- The organization_id is set via auth.organization_id context
 DROP POLICY IF EXISTS "Organization isolation" ON organizations;
 CREATE POLICY "Organization isolation" ON organizations
 FOR ALL
 USING (
-  id = COALESCE(current_setting('auth.organization_id', TRUE), '')
+  id IN (
+    SELECT organization_id
+    FROM members
+    WHERE user_id = COALESCE(current_setting('auth.user_id', TRUE), '')
+  )
 );
 
 -- Members: Users can only access members of their organizations
 -- Note: This policy allows users to see all members in organizations they belong to
--- The organization_id is set via auth.organization_id context
+-- We use auth.organization_id context to avoid circular dependency
 DROP POLICY IF EXISTS "Organization isolation" ON members;
 CREATE POLICY "Organization isolation" ON members
 FOR ALL
