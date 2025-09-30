@@ -4,6 +4,8 @@ import { trpcServer } from "@hono/trpc-server";
 import { appRouter, createTRPCContext } from "@repo/trpc";
 import { logger } from "hono/logger";
 import { auth } from "@repo/auth";
+import { tickets } from "./routes";
+import { env } from "@repo/validators";
 
 const app = new Hono();
 
@@ -19,13 +21,6 @@ app.use("*", corsMiddleware);
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => {
   return auth.handler(c.req.raw);
-});
-
-app.on("GET", "/session", async (c) => {
-  const session = await auth.api.getSession({
-    headers: c.req.raw.headers,
-  });
-  return c.json(session);
 });
 
 app.on("GET", "/health", async (c) => {
@@ -44,11 +39,13 @@ app.use(
   })
 );
 
+app.route("/tickets", tickets);
+
 app.notFound((c) => {
   return c.json({ ok: false, error: "Not Found", status: 404 }, 404);
 });
 
 export default {
-  port: process.env.PORT,
+  port: env.API_PORT,
   fetch: app.fetch,
 };
