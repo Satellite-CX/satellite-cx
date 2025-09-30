@@ -10,6 +10,7 @@ const app = new Hono();
 app.use(
   logger((str) => {
     const timestamp = new Date().toISOString();
+    // eslint-disable-next-line no-console
     console.log(`[${timestamp}] ${str}`);
   })
 );
@@ -38,7 +39,8 @@ app.use(
   "/trpc/*",
   trpcServer({
     router: appRouter,
-    createContext: async (opts, c) => createTRPCContext({ headers: c.req.raw.headers }),
+    createContext: async (opts, c) =>
+      createTRPCContext({ headers: c.req.raw.headers }),
   })
 );
 

@@ -1,11 +1,13 @@
 {
   "name": "api",
+  "type": "module",
   "scripts": {
     "dev": "PORT=8000 bun run --env-file=../../.env --hot src/index.ts",
     "build": "bun build ./src/index.ts --outdir ./build --target bun",
     "start": "PORT=8000 bun run ./build/index.js",
     "clean": "rm -rf .turbo node_modules",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@hono/trpc-server": "^0.4.0",
