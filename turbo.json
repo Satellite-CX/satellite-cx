@@ -11,11 +11,9 @@
         "DATABASE_URL",
         "DISABLE_RLS",
         "RLS_CLIENT_DATABASE_URL",
-        "POSTGRES_RLS_USER",
-        "POSTGRES_RLS_PASSWORD",
         "BETTER_AUTH_SECRET",
         "BETTER_AUTH_URL",
-        "PORT",
+        "API_PORT",
         "CORS_ORIGINS"
       ]
     },
@@ -36,7 +34,7 @@
         "POSTGRES_RLS_PASSWORD",
         "BETTER_AUTH_SECRET",
         "BETTER_AUTH_URL",
-        "PORT",
+        "API_PORT",
         "CORS_ORIGINS"
       ]
     },

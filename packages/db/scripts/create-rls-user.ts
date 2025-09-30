@@ -7,8 +7,8 @@ if (env.DISABLE_RLS) {
   process.exit(0);
 }
 
-const rlsUser = env.POSTGRES_RLS_USER!;
-const rlsPassword = env.POSTGRES_RLS_PASSWORD!;
+const rlsUser = process.env.POSTGRES_RLS_USER!;
+const rlsPassword = process.env.POSTGRES_RLS_PASSWORD!;
 
 try {
   const res = await adminDB.execute(sql`
