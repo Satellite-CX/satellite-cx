@@ -4,6 +4,7 @@ import { resetDatabase, seedDatabase } from "@repo/db/utils";
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { createTrpcCaller } from "../src";
 import { generateTestData } from "./generate-test-data";
+import { InferResultType } from "@repo/db";
 
 describe("Tickets", () => {
   let testData: Awaited<ReturnType<typeof generateTestData>>;
@@ -144,6 +145,47 @@ describe("Tickets", () => {
       });
 
       expect(result.length).toBe(2);
+    });
+  });
+
+  describe("With parameter", () => {
+    it("should return tickets with status objects when with.status is true", async () => {
+      const result = (await caller.tickets.list({
+        with: { status: true },
+      })) as InferResultType<"tickets", { status: true }>[];
+
+      const ticket = result[0]!;
+      expect(ticket.status).toBeDefined();
+      expect(typeof ticket.status).toBe("object");
+
+      expect(ticket.status!.id).toBeDefined();
+      expect(ticket.status!.name).toBeDefined();
+      expect(ticket.status!.icon).toBeDefined();
+      expect(ticket.status!.color).toBeDefined();
+    });
+
+    it("should return tickets with priority objects when with.priority is true", async () => {
+      const result = (await caller.tickets.list({
+        with: { priority: true },
+      })) as InferResultType<"tickets", { priority: true }>[];
+      await caller.tickets.list({ with: { priority: true } });
+
+      const ticket = result[0]!;
+      expect(ticket.priority).toBeDefined();
+      expect(typeof ticket.priority).toBe("object");
+
+      expect(ticket.priority!.id).toBeDefined();
+      expect(ticket.priority!.name).toBeDefined();
+    });
+
+    it("should return tickets with status strings when no with clause", async () => {
+      const result = await caller.tickets.list();
+
+      const ticket = result[0]!;
+      expect(ticket.status).toBeDefined();
+      expect(typeof ticket.status).toBe("string");
+
+      expect(ticket.status).toEqual(expect.any(String));
     });
   });
 

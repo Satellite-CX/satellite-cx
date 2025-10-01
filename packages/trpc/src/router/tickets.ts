@@ -6,6 +6,13 @@ import { protectedProcedure, router } from "../trpc";
 const columns = getTableColumns(tickets);
 const columnsKeys = Object.keys(columns) as (keyof typeof columns)[];
 
+const withSchema = z.object({
+  status: z.literal(true).optional(),
+  priority: z.literal(true).optional(),
+  customerId: z.literal(true).optional(),
+  assigneeId: z.literal(true).optional(),
+});
+
 export const ticketsListQuery = z
   .object({
     limit: z.number().optional(),
@@ -16,6 +23,7 @@ export const ticketsListQuery = z
         direction: z.enum(["asc", "desc"]),
       })
       .optional(),
+    with: withSchema.optional(),
   })
   .optional();
 
@@ -23,15 +31,17 @@ export const ticketsRouter = router({
   list: protectedProcedure
     .input(ticketsListQuery)
     .query(async ({ ctx, input }) => {
-      const { limit, offset, orderBy } = input ?? {};
+      const { limit, offset, orderBy, with: withParams } = input ?? {};
+
       return await ctx.db.rls((tx) =>
         tx.query.tickets.findMany({
           where: eq(tickets.organizationId, ctx.session.activeOrganizationId),
           limit,
           offset,
-          orderBy: (tickets, { asc, desc }) => {
+          with: withParams,
+          orderBy: (ticketsTable, { asc, desc }) => {
             if (!orderBy) {
-              return [desc(tickets.createdAt)];
+              return [desc(ticketsTable.createdAt)];
             }
             const { field, direction } = orderBy;
             const orderFn = direction === "asc" ? asc : desc;

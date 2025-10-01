@@ -144,7 +144,6 @@ When working on this codebase, remember:
 
 ## Code style instructions
 
-- Use meaningful names – no `data` or `obj`.
 - Keep functions small – do one thing only.
 - Avoid nesting – prefer early returns over deep `if/else`.
 - No magic values – use constants, enums, or literal types.
@@ -155,3 +154,4 @@ When working on this codebase, remember:
 - Delete dead code – no commented-out leftovers.
 - Keep tests clean – readable, fast, and documenting behavior.
 - Do not use `switch` statements.
+- Avoid type assertion

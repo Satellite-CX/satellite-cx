@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 import { createdAt, id, organizationId, updatedAt } from "./common";
@@ -36,3 +37,22 @@ export const ticketAudits = pgTable("ticket_audit", {
   to_value: jsonb("to_value"),
   createdAt,
 });
+
+export const ticketsRelations = relations(tickets, ({ one }) => ({
+  status: one(statuses, {
+    fields: [tickets.status],
+    references: [statuses.id],
+  }),
+  priority: one(priorities, {
+    fields: [tickets.priority],
+    references: [priorities.id],
+  }),
+  customer: one(customers, {
+    fields: [tickets.customerId],
+    references: [customers.id],
+  }),
+  assignee: one(users, {
+    fields: [tickets.assigneeId],
+    references: [users.id],
+  }),
+}));
