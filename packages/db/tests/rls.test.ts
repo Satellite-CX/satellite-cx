@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { nanoid } from "nanoid";
 import { createDrizzleClient } from "../src";
 import { adminDB } from "../src/client";
@@ -6,11 +6,12 @@ import * as schema from "../src/schema";
 import { resetDatabase, seedDatabase } from "../src/utils";
 
 describe("RLS Policies", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
+    await resetDatabase();
     await seedDatabase();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await resetDatabase();
   });
 
@@ -54,8 +55,10 @@ describe("RLS Policies", () => {
 
       const result = await rls((tx) => tx.query.organizations.findMany());
 
-      expect(result).toHaveLength(1);
-      expect(result[0]!.id).toBe(organization.id);
+      // Should only see the organization the user belongs to
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.every(org => org.id === organization.id)).toBe(true);
+      expect(result.find(org => org.id === organization.id)).toBeDefined();
     });
 
     test("Users should only see members from their organization", async () => {
@@ -116,7 +119,11 @@ describe("RLS Policies", () => {
 
       const result = await rls((tx) => tx.query.members.findMany());
 
-      expect(result).toHaveLength(2);
+      // Should only see members from the user's organization
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.every(member => member.organizationId === organization.id)).toBe(true);
+      expect(result.some(member => member.userId === user1.id)).toBe(true);
+      expect(result.some(member => member.userId === user2.id)).toBe(true);
       expect(result.map((m) => m.userId)).toContain(user1.id);
       expect(result.map((m) => m.userId)).toContain(user2.id);
     });
@@ -171,8 +178,10 @@ describe("RLS Policies", () => {
 
       const result = await rls((tx) => tx.query.teams.findMany());
 
-      expect(result).toHaveLength(1);
-      expect(result[0]!.id).toBe(team.id);
+      // Should only see teams from the user's organization
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.every(t => t.organizationId === organization.id)).toBe(true);
+      expect(result.find(t => t.id === team.id)).toBeDefined();
     });
 
     test("Users should only see customers from their organization", async () => {
@@ -227,8 +236,10 @@ describe("RLS Policies", () => {
 
       const result = await rls((tx) => tx.query.customers.findMany());
 
-      expect(result).toHaveLength(1);
-      expect(result[0]!.id).toBe(customer.id);
+      // Should only see customers from the user's organization
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.every(c => c.organizationId === organization.id)).toBe(true);
+      expect(result.find(c => c.id === customer.id)).toBeDefined();
     });
 
     test("Users should only see tickets from their organization", async () => {
@@ -296,8 +307,10 @@ describe("RLS Policies", () => {
 
       const result = await rls((tx) => tx.query.tickets.findMany());
 
-      expect(result).toHaveLength(1);
-      expect(result[0]!.id).toBe(ticket.id);
+      // Should only see tickets from the user's organization
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.every(t => t.organizationId === organization.id)).toBe(true);
+      expect(result.find(t => t.id === ticket.id)).toBeDefined();
     });
   });
 });

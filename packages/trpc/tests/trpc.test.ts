@@ -21,8 +21,8 @@ describe("Authentication Management", () => {
   let testData: Awaited<ReturnType<typeof generateTestData>>;
 
   beforeAll(async () => {
-    await seedDatabase();
     testData = await generateTestData();
+    await seedDatabase(testData);
   });
 
   afterEach(() => {

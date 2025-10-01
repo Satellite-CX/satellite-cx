@@ -17,30 +17,35 @@ describe("Organization Schema Tests", () => {
   let testUserId: string;
   let testOrganizationId: string;
   let testTeamId: string;
+  let testOrgSlug: string;
 
   beforeEach(async () => {
-    // Create a test user
+    // Create unique identifiers for this test run
+    const testSuffix = nanoid();
     testUserId = nanoid();
+    testOrganizationId = nanoid();
+    testTeamId = nanoid();
+    testOrgSlug = `test-org-${testSuffix}`;
+
+    // Create a test user
     await adminDB.insert(users).values({
       id: testUserId,
       name: "Test User",
-      email: `test-${nanoid()}@example.com`,
+      email: `test-${testSuffix}@example.com`,
       emailVerified: true,
     });
 
     // Create a test organization
-    testOrganizationId = nanoid();
     await adminDB.insert(organizations).values({
       id: testOrganizationId,
       name: "Test Organization",
-      slug: "test-org",
+      slug: testOrgSlug,
       logo: "https://example.com/logo.png",
       metadata: JSON.stringify({ plan: "pro" }),
       createdAt: new Date(),
     });
 
     // Create a test team
-    testTeamId = nanoid();
     await adminDB.insert(teams).values({
       id: testTeamId,
       name: "Test Team",
@@ -107,7 +112,7 @@ describe("Organization Schema Tests", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]!.name).toBe("Test Organization");
-      expect(result[0]!.slug).toBe("test-org");
+      expect(result[0]!.slug).toBe(testOrgSlug);
     });
 
     it("should update an organization", async () => {

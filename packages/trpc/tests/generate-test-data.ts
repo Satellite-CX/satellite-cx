@@ -1,7 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { auth } from "@repo/auth";
 import { adminDB } from "@repo/db/client";
-import { members, organizations, teamMembers, teams } from "@repo/db/schema";
+import { apikeys, members, organizations, teamMembers, teams } from "@repo/db/schema";
+import { eq } from "drizzle-orm";
 import { API_KEY_PREFIX } from "../../auth/src/plugins/api-key";
 
 export async function generateTestData() {
@@ -83,7 +84,7 @@ export async function generateTestData() {
   const apiKey = await auth.api.createApiKey({
     body: {
       name: faker.lorem.word(),
-      expiresIn: 60 * 60 * 24 * 7, // 7 days
+      expiresIn: 60 * 60 * 24 * 7,
       userId: user!.id,
       prefix: API_KEY_PREFIX,
       metadata: {
@@ -91,6 +92,14 @@ export async function generateTestData() {
       },
     },
   });
+
+  await adminDB
+    .update(apikeys)
+    .set({
+      rateLimitEnabled: false,
+      rateLimitMax: 10000,
+    })
+    .where(eq(apikeys.id, apiKey.id));
 
   return {
     user,

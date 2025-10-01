@@ -24,6 +24,9 @@ describe("Complete Organization Workflow Tests", () => {
   let memberSessionId: string;
 
   beforeEach(async () => {
+    // Create unique identifiers for this test run
+    const testSuffix = nanoid();
+
     // Create users
     ownerUserId = nanoid();
     adminUserId = nanoid();
@@ -33,19 +36,19 @@ describe("Complete Organization Workflow Tests", () => {
       {
         id: ownerUserId,
         name: "Owner User",
-        email: "owner@example.com",
+        email: `owner-${testSuffix}@example.com`,
         emailVerified: true,
       },
       {
         id: adminUserId,
         name: "Admin User",
-        email: "admin@example.com",
+        email: `admin-${testSuffix}@example.com`,
         emailVerified: true,
       },
       {
         id: memberUserId,
         name: "Member User",
-        email: "member@example.com",
+        email: `member-${testSuffix}@example.com`,
         emailVerified: true,
       },
     ]);
@@ -55,7 +58,7 @@ describe("Complete Organization Workflow Tests", () => {
     await adminDB.insert(organizations).values({
       id: organizationId,
       name: "Test Organization",
-      slug: "test-org",
+      slug: `test-org-${testSuffix}`,
       logo: "https://example.com/logo.png",
       metadata: JSON.stringify({ plan: "pro" }),
       createdAt: new Date(),

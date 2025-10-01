@@ -19,26 +19,29 @@ describe("Database Constraints and Relationships", () => {
   let testTeamId: string;
 
   beforeEach(async () => {
-    // Create a test user
+    // Create unique identifiers for this test run
+    const testSuffix = nanoid();
     testUserId = nanoid();
+    testOrganizationId = nanoid();
+    testTeamId = nanoid();
+
+    // Create a test user
     await adminDB.insert(users).values({
       id: testUserId,
       name: "Test User",
-      email: `test-${nanoid()}@example.com`,
+      email: `test-${testSuffix}@example.com`,
       emailVerified: true,
     });
 
     // Create a test organization
-    testOrganizationId = nanoid();
     await adminDB.insert(organizations).values({
       id: testOrganizationId,
       name: "Test Organization",
-      slug: "test-org",
+      slug: `test-org-${testSuffix}`,
       createdAt: new Date(),
     });
 
     // Create a test team
-    testTeamId = nanoid();
     await adminDB.insert(teams).values({
       id: testTeamId,
       name: "Test Team",
