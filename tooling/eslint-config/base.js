@@ -3,6 +3,7 @@ import eslintConfigPrettier from "eslint-config-prettier";
 import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
 import onlyWarn from "eslint-plugin-only-warn";
+import drizzlePlugin from "eslint-plugin-drizzle";
 
 /**
  * A shared ESLint configuration for the repository.
@@ -16,10 +17,19 @@ export const config = [
   {
     plugins: {
       turbo: turboPlugin,
+      drizzle: drizzlePlugin,
     },
     rules: {
       "turbo/no-undeclared-env-vars": "warn",
       "no-console": ["warn", { allow: ["warn", "error"] }],
+      "drizzle/enforce-delete-with-where": [
+        "error",
+        { drizzleObjectName: ["adminDB", "clientDB", "db"] },
+      ],
+      "drizzle/enforce-update-with-where": [
+        "error",
+        { drizzleObjectName: ["adminDB", "clientDB", "db"] },
+      ],
     },
   },
   {

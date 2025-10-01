@@ -20,5 +20,10 @@
     "globals": "^16.3.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.40.0"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "eslint-plugin-drizzle": "^0.2.3"
   }
 }
