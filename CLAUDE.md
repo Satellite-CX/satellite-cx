@@ -142,7 +142,7 @@ When working on this codebase, remember:
 - Customer data must be isolated per organization
 - Audit trails should be created for significant data changes
 
-## Code style instructions
+# Code style instructions
 
 - Keep functions small – do one thing only.
 - Avoid nesting – prefer early returns over deep `if/else`.

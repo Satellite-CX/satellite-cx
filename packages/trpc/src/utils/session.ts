@@ -1,4 +1,4 @@
-import { Session } from "@repo/auth";
+import { Session } from "@repo/db/auth";
 import { TRPCError } from "@trpc/server";
 import { members } from "@repo/db/schema";
 import { adminDB } from "@repo/db/client";

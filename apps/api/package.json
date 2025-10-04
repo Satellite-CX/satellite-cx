@@ -5,13 +5,14 @@
     "dev": "PORT=8000 bun run --env-file=../../.env --hot src/index.ts",
     "build": "bun build ./src/index.ts --outdir ./build --target bun",
     "start": "PORT=8000 bun run ./build/index.js",
+    "test": "bun --env-file=../../.env test --reporter=junit --reporter-outfile=./test-results.xml",
     "clean": "rm -rf .turbo node_modules",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."
   },
   "dependencies": {
     "@hono/trpc-server": "^0.4.0",
-    "@repo/auth": "workspace:*",
+    "@hono/zod-validator": "^0.7.3",
     "@repo/db": "workspace:*",
     "@repo/trpc": "workspace:*",
     "@repo/validators": "workspace:*",

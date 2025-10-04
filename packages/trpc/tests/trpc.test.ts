@@ -1,5 +1,9 @@
-import { auth } from "@repo/auth";
-import { resetDatabase, seedDatabase } from "@repo/db/utils";
+import { auth } from "@repo/db/auth";
+import {
+  resetDatabase,
+  seedDatabase,
+  generateTestData,
+} from "@repo/db/test-utils";
 import {
   afterAll,
   afterEach,
@@ -10,7 +14,6 @@ import {
   setSystemTime,
 } from "bun:test";
 import { createTrpcCaller } from "../src";
-import { generateTestData } from "./generate-test-data";
 import { adminDB } from "@repo/db/client";
 import { apikeys } from "@repo/db/schema";
 import { eq } from "drizzle-orm";

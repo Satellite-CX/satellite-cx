@@ -1,9 +1,12 @@
 import { adminDB } from "@repo/db/client";
 import { tickets, organizations } from "@repo/db/schema";
-import { resetDatabase, seedDatabase } from "@repo/db/utils";
+import {
+  resetDatabase,
+  seedDatabase,
+  generateTestData,
+} from "@repo/db/test-utils";
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { createTrpcCaller } from "../src";
-import { generateTestData } from "./generate-test-data";
 import { InferResultType } from "@repo/db";
 
 describe("Tickets", () => {
@@ -139,7 +142,7 @@ describe("Tickets", () => {
 
     it("should sort by multiple columns with limit and offset", async () => {
       const result = await caller.tickets.list({
-        orderBy: { field: "priority", direction: "asc" },
+        orderBy: { field: "subject", direction: "asc" },
         limit: 2,
         offset: 1,
       });
@@ -193,7 +196,7 @@ describe("Tickets", () => {
     it("should reject invalid field names", async () => {
       expect(
         caller.tickets.list({
-          // @ts-expect-error Testing invalid field
+          // @ts-expect-error - invalid field name
           orderBy: { field: "invalidField", direction: "asc" },
         })
       ).rejects.toThrow();

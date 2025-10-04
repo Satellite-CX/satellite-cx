@@ -23,6 +23,8 @@ export const tickets = pgTable("ticket", {
   closedAt: timestamp("closed_at"),
 });
 
+export type Ticket = typeof tickets.$inferSelect;
+
 export const ticketAudits = pgTable("ticket_audit", {
   id,
   organizationId,

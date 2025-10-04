@@ -1,4 +1,4 @@
-import { auth } from "@repo/auth";
+import { auth } from "@repo/db/auth";
 import { createDrizzleClient } from "@repo/db";
 import { TRPCError } from "@trpc/server";
 import { t } from "./root";

@@ -3,7 +3,7 @@ import { corsMiddleware } from "./utils/cors";
 import { trpcServer } from "@hono/trpc-server";
 import { appRouter, createTRPCContext } from "@repo/trpc";
 import { logger } from "hono/logger";
-import { auth } from "@repo/auth";
+import { auth } from "@repo/db/auth";
 import { tickets } from "./routes";
 import { env } from "@repo/validators";
 
@@ -19,7 +19,7 @@ app.use(
 
 app.use("*", corsMiddleware);
 
-app.on(["POST", "GET"], "/api/auth/*", (c) => {
+app.on(["POST", "GET"], "/auth/*", (c) => {
   return auth.handler(c.req.raw);
 });
 
@@ -49,3 +49,5 @@ export default {
   port: env.API_PORT,
   fetch: app.fetch,
 };
+
+export { app };

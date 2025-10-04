@@ -1,9 +1,15 @@
 import { faker } from "@faker-js/faker";
-import { auth } from "@repo/auth";
+import { auth } from "@repo/db/auth";
 import { adminDB } from "@repo/db/client";
-import { apikeys, members, organizations, teamMembers, teams } from "@repo/db/schema";
+import {
+  apikeys,
+  members,
+  organizations,
+  teamMembers,
+  teams,
+} from "@repo/db/schema";
 import { eq } from "drizzle-orm";
-import { API_KEY_PREFIX } from "../../auth/src/plugins/api-key";
+import { API_KEY_PREFIX } from "../../src/utils";
 
 export async function generateTestData() {
   const password = faker.internet.password();
