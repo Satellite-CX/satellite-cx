@@ -22,6 +22,7 @@ import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
 import { Route as PostsPostIdRouteImport } from './routes/posts.$postId'
 import { Route as DocsSplatRouteImport } from './routes/docs/$'
 import { Route as ApiUsersRouteImport } from './routes/api/users'
+import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as PathlessLayoutNestedLayoutRouteImport } from './routes/_pathlessLayout/_nested-layout'
 import { Route as PostsPostIdDeepRouteImport } from './routes/posts_.$postId.deep'
 import { Route as ApiUsersUserIdRouteImport } from './routes/api/users.$userId'
@@ -92,6 +93,11 @@ const ApiUsersRoute = ApiUsersRouteImport.update({
   path: '/api/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSearchRoute = ApiSearchRouteImport.update({
+  id: '/api/search',
+  path: '/api/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PathlessLayoutNestedLayoutRoute =
   PathlessLayoutNestedLayoutRouteImport.update({
     id: '/_nested-layout',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/posts': typeof PostsRouteWithChildren
   '/redirect': typeof RedirectRoute
   '/users': typeof UsersRouteWithChildren
+  '/api/search': typeof ApiSearchRoute
   '/api/users': typeof ApiUsersRouteWithChildren
   '/docs/$': typeof DocsSplatRoute
   '/posts/$postId': typeof PostsPostIdRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/deferred': typeof DeferredRoute
   '/redirect': typeof RedirectRoute
+  '/api/search': typeof ApiSearchRoute
   '/api/users': typeof ApiUsersRouteWithChildren
   '/docs/$': typeof DocsSplatRoute
   '/posts/$postId': typeof PostsPostIdRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/redirect': typeof RedirectRoute
   '/users': typeof UsersRouteWithChildren
   '/_pathlessLayout/_nested-layout': typeof PathlessLayoutNestedLayoutRouteWithChildren
+  '/api/search': typeof ApiSearchRoute
   '/api/users': typeof ApiUsersRouteWithChildren
   '/docs/$': typeof DocsSplatRoute
   '/posts/$postId': typeof PostsPostIdRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/posts'
     | '/redirect'
     | '/users'
+    | '/api/search'
     | '/api/users'
     | '/docs/$'
     | '/posts/$postId'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/customScript.js'
     | '/deferred'
     | '/redirect'
+    | '/api/search'
     | '/api/users'
     | '/docs/$'
     | '/posts/$postId'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/redirect'
     | '/users'
     | '/_pathlessLayout/_nested-layout'
+    | '/api/search'
     | '/api/users'
     | '/docs/$'
     | '/posts/$postId'
@@ -240,6 +252,7 @@ export interface RootRouteChildren {
   PostsRoute: typeof PostsRouteWithChildren
   RedirectRoute: typeof RedirectRoute
   UsersRoute: typeof UsersRouteWithChildren
+  ApiSearchRoute: typeof ApiSearchRoute
   ApiUsersRoute: typeof ApiUsersRouteWithChildren
   DocsSplatRoute: typeof DocsSplatRoute
   PostsPostIdDeepRoute: typeof PostsPostIdDeepRoute
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       path: '/api/users'
       fullPath: '/api/users'
       preLoaderRoute: typeof ApiUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/search': {
+      id: '/api/search'
+      path: '/api/search'
+      fullPath: '/api/search'
+      preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_pathlessLayout/_nested-layout': {
@@ -450,6 +470,7 @@ const rootRouteChildren: RootRouteChildren = {
   PostsRoute: PostsRouteWithChildren,
   RedirectRoute: RedirectRoute,
   UsersRoute: UsersRouteWithChildren,
+  ApiSearchRoute: ApiSearchRoute,
   ApiUsersRoute: ApiUsersRouteWithChildren,
   DocsSplatRoute: DocsSplatRoute,
   PostsPostIdDeepRoute: PostsPostIdDeepRoute,
