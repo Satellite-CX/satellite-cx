@@ -29,26 +29,37 @@ export const ticketListQueryTrpcInput = z
   })
   .optional();
 
-export const ticketListRequestQuery = z.strictObject({
-  limit: z.coerce.number().optional(),
-  offset: z.coerce.number().optional(),
-  orderBy: z
-    .string()
-    .transform((val) => {
-      try {
-        return JSON.parse(val);
-      } catch {
-        throw new Error("Invalid JSON format for orderBy");
-      }
+export const ticketListRequestQuery = z
+  .strictObject({
+    limit: z.coerce.number().optional(),
+    offset: z.coerce.number().optional(),
+    orderBy: z
+      .string()
+      .transform((val) => {
+        try {
+          return JSON.parse(val);
+        } catch {
+          throw new Error("Invalid JSON format for orderBy");
+        }
+      })
+      .pipe(ticketOrderBy)
+      .optional(),
+    with: z
+      .string()
+      .transform((val) => {
+        const fields = val.split(",").map((r) => r.trim());
+        return Object.fromEntries(fields.map((field) => [field, true]));
+      })
+      .pipe(ticketWithRelations)
+      .optional(),
+  })
+  .describe("Query parameters for listing tickets");
+
+export const ticketListResponseSchema = z
+  .array(
+    z.object({
+      foo: z.string(),
+      bar: z.number(),
     })
-    .pipe(ticketOrderBy)
-    .optional(),
-  with: z
-    .string()
-    .transform((val) => {
-      const fields = val.split(",").map((r) => r.trim());
-      return Object.fromEntries(fields.map((field) => [field, true]));
-    })
-    .pipe(ticketWithRelations)
-    .optional(),
-});
+  )
+  .describe("List of tickets");
