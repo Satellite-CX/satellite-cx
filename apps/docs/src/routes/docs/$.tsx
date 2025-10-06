@@ -11,7 +11,7 @@ import {
   DocsPage,
   DocsTitle,
 } from "fumadocs-ui/page";
-import defaultMdxComponents from "fumadocs-ui/mdx";
+import { getMDXComponents } from "~/components/mdx-components";
 import { createClientLoader } from "fumadocs-mdx/runtime/vite";
 import { baseOptions } from "~/lib/layout.shared";
 
@@ -33,9 +33,33 @@ const loader = createServerFn({
     const page = source.getPage(slugs);
     if (!page) throw notFound();
 
+    // Check if this is an OpenAPI page and pre-process the data
+    let apiPageData = null;
+    if (page.data._openapi) {
+      try {
+        // Import openapi only on server side
+        const { openapi } = await import("~/lib/openapi");
+
+        // Extract the APIPage props from the MDX content
+        const apiPageProps = {
+          document: "./petstore-openapi.json",
+          operations: page.data._openapi.operations || [],
+          webhooks: [],
+          hasHead: false
+        };
+
+        // Get the processed API page props
+        apiPageData = await openapi.getAPIPageProps(apiPageProps);
+      } catch (error) {
+        console.error("Error processing OpenAPI data:", error);
+        apiPageData = { error: error instanceof Error ? error.message : String(error) };
+      }
+    }
+
     return {
       tree: source.pageTree as object,
       path: page.path,
+      apiPageData,
     };
   });
 
@@ -48,9 +72,7 @@ const clientLoader = createClientLoader(docs.doc, {
         <DocsDescription>{frontmatter.description}</DocsDescription>
         <DocsBody>
           <MDX
-            components={{
-              ...defaultMdxComponents,
-            }}
+            components={getMDXComponents()}
           />
         </DocsBody>
       </DocsPage>
