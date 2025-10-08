@@ -1,0 +1,63 @@
+---
+title: REST API
+description: Satellite CX REST API documentation
+---
+
+# REST API
+
+Welcome to the Satellite CX REST API documentation. This API provides endpoints for managing your customer support platform.
+
+## Base URL
+
+```
+https://your-domain.com/api
+```
+
+## Authentication
+
+All API requests require authentication. Include your API key in the request headers:
+
+```
+Authorization: Bearer your-api-key
+```
+
+## Endpoints
+
+The API is organized into the following modules:
+
+### Tickets
+- **GET /tickets** - Retrieve tickets with filtering and pagination
+- **POST /tickets** - Create a new ticket
+- **GET /tickets/\{id\}** - Get a specific ticket
+- **PUT /tickets/\{id\}** - Update a ticket
+- **DELETE /tickets/\{id\}** - Delete a ticket
+
+## Response Format
+
+All API responses follow a consistent JSON format:
+
+```json
+{
+  "success": true,
+  "data": {...},
+  "message": "Optional message"
+}
+```
+
+## Error Handling
+
+Error responses include an HTTP status code and error details:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request parameters"
+  }
+}
+```
+
+## Rate Limiting
+
+API requests are rate-limited to 1000 requests per hour per API key.

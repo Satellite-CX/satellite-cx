@@ -26,9 +26,6 @@ importers:
       '@hono/trpc-server':
         specifier: ^0.4.0
         version: 0.4.0(@trpc/server@11.5.1(typescript@5.9.2))(hono@4.9.9)
-      '@hono/zod-validator':
-        specifier: ^0.7.3
-        version: 0.7.3(hono@4.9.9)(zod@4.1.11)
       '@repo/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -881,12 +878,6 @@ packages:
     peerDependencies:
       '@trpc/server': ^10.10.0 || >11.0.0-rc
       hono: '>=4.*'
-
-  '@hono/zod-validator@0.7.3':
-    resolution: {integrity: sha512-uYGdgVib3RlGD698WR5dVM0zB3UuPY5vHKXffGUbUh7r4xY+mFIhF3/v4AcQVLrU5CQdBso8BJr4wuVoCrjTuQ==}
-    peerDependencies:
-      hono: '>=3.9.0'
-      zod: ^3.25.0 || ^4.0.0
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -5029,11 +5020,6 @@ snapshots:
     dependencies:
       '@trpc/server': 11.5.1(typescript@5.9.2)
       hono: 4.9.9
-
-  '@hono/zod-validator@0.7.3(hono@4.9.9)(zod@4.1.11)':
-    dependencies:
-      hono: 4.9.9
-      zod: 4.1.11
 
   '@humanfs/core@0.19.1': {}
 

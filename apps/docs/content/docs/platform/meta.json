@@ -1,0 +1,13 @@
+{
+  "title": "Platform",
+  "description": "Learn how to use Satellite CX",
+  "icon": "Settings",
+  "root": true,
+  "pages": [
+    "getting-started",
+    "features",
+    "administration",
+    "integrations",
+    "deployment"
+  ]
+}

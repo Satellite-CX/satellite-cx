@@ -13,7 +13,6 @@
   "dependencies": {
     "@hono/standard-validator": "^0.1.5",
     "@hono/trpc-server": "^0.4.0",
-    "@hono/zod-validator": "^0.7.3",
     "@repo/db": "workspace:*",
     "@repo/trpc": "workspace:*",
     "@repo/validators": "workspace:*",

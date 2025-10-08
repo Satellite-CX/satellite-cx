@@ -1,0 +1,7 @@
+{
+  "title": "Developer",
+  "description": "APIs, SDKs, and developer resources",
+  "icon": "Code",
+  "root": true,
+  "pages": ["index", "tickets", "sdks"]
+}

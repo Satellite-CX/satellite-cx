@@ -31,8 +31,11 @@ export const ticketListQueryTrpcInput = z
 
 export const ticketListRequestQuery = z
   .strictObject({
-    limit: z.coerce.number().optional(),
-    offset: z.coerce.number().optional(),
+    limit: z.coerce
+      .number()
+      .optional()
+      .describe("Limit the number of tickets returned"),
+    offset: z.coerce.number().optional().describe("Skip the first N tickets"),
     orderBy: z
       .string()
       .transform((val) => {

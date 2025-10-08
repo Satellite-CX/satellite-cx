@@ -1,0 +1,67 @@
+---
+title: Deployment
+description: Learn how to deploy and host Satellite CX in your infrastructure with various deployment options.
+---
+
+# Deployment
+
+Learn how to deploy and host Satellite CX in your infrastructure with various deployment options.
+
+## Deployment Options
+
+### Docker Deployment
+- Single container setup
+- Multi-container with Docker Compose
+- Production-ready configurations
+- Health checks and monitoring
+
+### Kubernetes
+- Helm charts for easy deployment
+- Horizontal pod autoscaling
+- Service mesh integration
+- Persistent volume configurations
+
+### Cloud Platforms
+- AWS deployment guide
+- Google Cloud Platform setup
+- Azure container instances
+- Digital Ocean apps
+
+### Self-Hosted
+- Bare metal installation
+- VM-based deployment
+- Load balancer configuration
+- SSL/TLS setup
+
+## Infrastructure Requirements
+
+### Minimum Requirements
+- CPU: 2 cores
+- RAM: 4GB
+- Storage: 20GB
+- Database: PostgreSQL 13+
+
+### Recommended Production
+- CPU: 4+ cores
+- RAM: 8GB+
+- Storage: 100GB+ SSD
+- Load balancer
+- CDN for assets
+
+## Environment Configuration
+
+### Environment Variables
+```bash
+DATABASE_URL=postgresql://...
+REDIS_URL=redis://...
+JWT_SECRET=your-secret-key
+SMTP_HOST=your-smtp-server
+```
+
+### Security Considerations
+- Use strong passwords
+- Enable HTTPS
+- Configure firewall rules
+- Regular security updates
+
+Ready to deploy? Choose your preferred deployment method below.

@@ -15,15 +15,14 @@ node_modules
 # Testing
 coverage
 test-results.xml
+.playwright-mcp/
 
 # Turbo
 .turbo
 
-# Vercel
-.vercel
-
 # Build Outputs
 .next/
+.source/
 out/
 build
 dist

@@ -1,6 +1,4 @@
-// import { zValidator } from "@hono/zod-validator";
 import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
-
 import { createTrpcCaller } from "@repo/trpc";
 import {
   ticketListRequestQuery,
@@ -12,6 +10,7 @@ const tickets = new Hono();
 
 tickets.get(
   "/",
+  zValidator("query", ticketListRequestQuery),
   describeRoute({
     responses: {
       200: {
@@ -24,7 +23,6 @@ tickets.get(
       },
     },
   }),
-  zValidator("query", ticketListRequestQuery),
   async (c) => {
     const caller = createTrpcCaller({ headers: c.req.raw.headers });
     const query = c.req.valid("query");

@@ -1,0 +1,66 @@
+---
+title: Webhooks
+description: Use webhooks to receive real-time notifications about events in your Satellite CX instance.
+---
+
+# Webhooks
+
+Use webhooks to receive real-time notifications about events in your Satellite CX instance.
+
+## Overview
+
+Webhooks allow you to receive HTTP notifications whenever specific events occur in your support system. This enables you to:
+
+- Sync data with external systems
+- Trigger automated workflows
+- Send notifications to other tools
+- Create custom integrations
+
+## Available Events
+
+### Ticket Events
+- `ticket.created` - New ticket created
+- `ticket.updated` - Ticket details changed
+- `ticket.assigned` - Ticket assigned to agent
+- `ticket.status_changed` - Status updated
+- `ticket.closed` - Ticket resolved/closed
+
+### Customer Events
+- `customer.created` - New customer registered
+- `customer.updated` - Customer profile changed
+
+### Comment Events
+- `comment.created` - New comment added
+- `comment.updated` - Comment edited
+
+## Webhook Configuration
+
+1. **Create Webhook Endpoint**
+   - Set up endpoint URL
+   - Configure authentication
+   - Select events to subscribe
+
+2. **Security Setup**
+   - Use HTTPS endpoints
+   - Verify webhook signatures
+   - Implement retry logic
+
+## Payload Example
+
+```json
+{
+  "event": "ticket.created",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "data": {
+    "ticket": {
+      "id": "ticket_123",
+      "title": "Login issue",
+      "status": "open",
+      "priority": "high",
+      "customer_id": "customer_456"
+    }
+  }
+}
+```
+
+Ready to set up webhooks? Follow our configuration guide to get started.

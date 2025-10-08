@@ -1,0 +1,115 @@
+---
+title: SDKs
+description: Official and community SDKs for integrating with the Satellite CX API
+---
+
+# SDKs
+
+Integrate with Satellite CX using our official SDKs and community-maintained libraries.
+
+## Official SDKs
+
+### JavaScript/TypeScript SDK
+```bash
+npm install @satellite-cx/sdk
+```
+
+**Features:**
+- Full TypeScript support
+- Automatic retry logic
+- Built-in rate limiting
+- Promise-based API
+
+**Example usage:**
+```typescript
+import { SatelliteCX } from '@satellite-cx/sdk';
+
+const client = new SatelliteCX({
+  apiKey: 'your-api-key',
+  baseUrl: 'https://your-domain.com/api'
+});
+
+// Create a ticket
+const ticket = await client.tickets.create({
+  title: 'Login issue',
+  description: 'User cannot log in',
+  priority: 'high',
+  customer_id: 'customer_123'
+});
+```
+
+### Python SDK
+```bash
+pip install satellite-cx
+```
+
+**Features:**
+- Pythonic API design
+- Async/await support
+- Automatic pagination
+- Built-in error handling
+
+**Example usage:**
+```python
+from satellite_cx import SatelliteCX
+
+client = SatelliteCX(
+    api_key='your-api-key',
+    base_url='https://your-domain.com/api'
+)
+
+# Create a ticket
+ticket = client.tickets.create(
+    title='Login issue',
+    description='User cannot log in',
+    priority='high',
+    customer_id='customer_123'
+)
+```
+
+## Community SDKs
+
+### PHP SDK
+```bash
+composer require satellite-cx/php-sdk
+```
+
+### Ruby SDK
+```bash
+gem install satellite_cx
+```
+
+### Go SDK
+```bash
+go get github.com/satellite-cx/go-sdk
+```
+
+## SDK Features
+
+All official SDKs include:
+
+- **Authentication** - Automatic API key management
+- **Error Handling** - Structured error responses
+- **Rate Limiting** - Built-in rate limit handling
+- **Retries** - Automatic retry with exponential backoff
+- **Pagination** - Simplified pagination handling
+- **Webhooks** - Webhook signature verification
+- **Types** - Full type definitions for all API responses
+
+## Getting Help
+
+- **Documentation** - Complete API reference and guides
+- **Examples** - Sample code and integration patterns
+- **Support** - Community forum and official support
+- **Issues** - GitHub issues for bug reports and feature requests
+
+## Contributing
+
+We welcome contributions to our SDKs! Check out our contribution guidelines:
+
+- Fork the repository
+- Create a feature branch
+- Add tests for new functionality
+- Submit a pull request
+
+Each SDK repository includes detailed development setup instructions and testing guidelines.

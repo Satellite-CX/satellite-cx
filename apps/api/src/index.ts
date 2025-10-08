@@ -4,9 +4,9 @@ import { trpcServer } from "@hono/trpc-server";
 import { appRouter, createTRPCContext } from "@repo/trpc";
 import { logger } from "hono/logger";
 import { auth } from "@repo/db/auth";
-import * as routes from "./routes";
 import { env } from "@repo/validators";
 import { openAPIRouteHandler } from "hono-openapi";
+import { restApi } from "./routes";
 
 const app = new Hono();
 
@@ -40,11 +40,11 @@ app.use(
   })
 );
 
-app.route("/tickets", routes.tickets);
+app.route("/", restApi);
 
 app.get(
   "/openapi.json",
-  openAPIRouteHandler(routes.tickets, {
+  openAPIRouteHandler(restApi, {
     documentation: {
       info: {
         title: "Satellite CX",
