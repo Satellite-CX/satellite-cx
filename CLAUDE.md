@@ -46,6 +46,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Uses pnpm workspaces with Node.js 24+ requirement
 - All internal packages are under `@repo/*` namespace
+- **IMPORTANT**: This is a monorepo - NEVER use `cd` to navigate into packages. Always use `pnpm --filter <package-name> <command>` to run commands in specific packages
+- Package names: `@repo/api`, `@repo/db`, `@repo/trpc`, `@repo/auth`, `@repo/ui`, `@repo/validators`
 
 ## Architecture
 
@@ -155,3 +157,7 @@ When working on this codebase, remember:
 - Keep tests clean – readable, fast, and documenting behavior.
 - Do not use `switch` statements.
 - Avoid type assertion
+
+# Important Instructions for AI Assistants
+
+- ALWAYS use the GitHub MCP server (mcp__github__*) when inspecting GitHub URLs instead of WebFetch or gh CLI.
