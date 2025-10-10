@@ -5,6 +5,8 @@ import {
   ticketListRequestQuery,
   ticketListSchema,
   ticketSchema,
+  ticketDeleteSchema,
+  ticketDeleteResponseSchema,
 } from "@repo/validators";
 
 const tickets = new OpenAPIHono();
@@ -71,6 +73,38 @@ tickets.openapi(
   async (c) => {
     const caller = createTrpcCaller({ headers: c.req.raw.headers });
     const data = await caller.tickets.get(c.req.param());
+    return c.json(data);
+  }
+);
+
+tickets.openapi(
+  createRoute({
+    method: "delete",
+    title: "Delete Ticket",
+    summary: "Delete a ticket",
+    operationId: "deleteTicket",
+    path: "/{id}",
+    tags: ["tickets"],
+    request: {
+      params: ticketDeleteSchema,
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: ticketDeleteResponseSchema,
+          },
+        },
+        description: "Ticket deleted successfully",
+      },
+      404: {
+        description: "Ticket not found",
+      },
+    },
+  }),
+  async (c) => {
+    const caller = createTrpcCaller({ headers: c.req.raw.headers });
+    const data = await caller.tickets.delete(c.req.param());
     return c.json(data);
   }
 );

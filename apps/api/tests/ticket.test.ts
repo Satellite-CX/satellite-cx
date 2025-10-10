@@ -188,4 +188,106 @@ describe("Tickets", () => {
       expect(typeof data.description).toBe("string");
     });
   });
+
+  describe("DELETE /tickets/{id}", () => {
+    it("should successfully delete an existing ticket", async () => {
+      const listResponse = await app.request("/tickets", {
+        headers,
+      });
+      const tickets = await listResponse.json();
+      const ticketToDelete = tickets[0];
+
+      const deleteResponse = await app.request(`/tickets/${ticketToDelete.id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(deleteResponse.status).toBe(200);
+      const deleteData = await deleteResponse.json();
+      expect(deleteData.success).toBe(true);
+      expect(deleteData.message).toBe("Ticket deleted successfully");
+
+      // Verify ticket is actually deleted
+      const getResponse = await app.request(`/tickets/${ticketToDelete.id}`, {
+        headers,
+      });
+      expect(getResponse.status).toBe(404);
+
+      // Verify remaining tickets count
+      const newListResponse = await app.request("/tickets", {
+        headers,
+      });
+      const remainingTickets = await newListResponse.json();
+      expect(remainingTickets.length).toBe(tickets.length - 1);
+    });
+
+    it("should return 404 for non-existent ticket", async () => {
+      const response = await app.request("/tickets/non-existent-id", {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should enforce organization isolation", async () => {
+      const response = await app.request("/tickets/other-org-ticket-id", {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should require authentication", async () => {
+      const listResponse = await app.request("/tickets", {
+        headers,
+      });
+      const tickets = await listResponse.json();
+      const firstTicket = tickets[0];
+
+      const response = await app.request(`/tickets/${firstTicket.id}`, {
+        method: "DELETE",
+      });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should return correct response schema", async () => {
+      const listResponse = await app.request("/tickets", {
+        headers,
+      });
+      const tickets = await listResponse.json();
+      const ticketToDelete = tickets[1]; // Use second ticket to avoid conflicts
+
+      const deleteResponse = await app.request(`/tickets/${ticketToDelete.id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(deleteResponse.status).toBe(200);
+      const data = await deleteResponse.json();
+
+      expect(data).toHaveProperty("success");
+      expect(data).toHaveProperty("message");
+      expect(typeof data.success).toBe("boolean");
+      expect(typeof data.message).toBe("string");
+      expect(data.success).toBe(true);
+    });
+
+    it("should handle invalid method gracefully", async () => {
+      const listResponse = await app.request("/tickets", {
+        headers,
+      });
+      const tickets = await listResponse.json();
+      const firstTicket = tickets[0];
+
+      const response = await app.request(`/tickets/${firstTicket.id}`, {
+        method: "PATCH", // Invalid method for this endpoint
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+  });
 });

@@ -37,7 +37,7 @@
             "required": false,
             "description": "Limit the number of tickets returned",
             "name": "limit",
-            "in": "path"
+            "in": "query"
           },
           {
             "schema": {
@@ -51,7 +51,7 @@
             "required": false,
             "description": "Skip the first N tickets",
             "name": "offset",
-            "in": "path"
+            "in": "query"
           },
           {
             "schema": {
@@ -59,7 +59,7 @@
             },
             "required": false,
             "name": "orderBy",
-            "in": "path"
+            "in": "query"
           },
           {
             "schema": {
@@ -67,7 +67,7 @@
             },
             "required": false,
             "name": "with",
-            "in": "path"
+            "in": "query"
           }
         ],
         "responses": {
@@ -256,6 +256,58 @@
                 }
               }
             }
+          }
+        }
+      },
+      "delete": {
+        "title": "Delete Ticket",
+        "summary": "Delete a ticket",
+        "operationId": "deleteTicket",
+        "tags": [
+          "tickets"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "123",
+              "description": "The ID of the ticket to delete"
+            },
+            "required": true,
+            "description": "The ID of the ticket to delete",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the deletion was successful",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Success message",
+                      "example": "Ticket deleted successfully"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
           }
         }
       }
