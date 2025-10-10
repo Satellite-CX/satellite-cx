@@ -11,6 +11,8 @@ export const statuses = pgTable("status", {
   updatedAt,
 });
 
+export type Status = typeof statuses.$inferSelect;
+
 export const priorities = pgTable("priority", {
   id,
   organizationId,
@@ -20,3 +22,5 @@ export const priorities = pgTable("priority", {
   createdAt,
   updatedAt,
 });
+
+export type Priority = typeof priorities.$inferSelect;

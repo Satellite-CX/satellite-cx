@@ -1,6 +1,7 @@
 import { z as zOpenApi } from "@hono/zod-openapi";
 import { z } from "zod";
 import { Ticket } from "./schema";
+import { limit, limitOpenApi, offset, offsetOpenApi } from "../shared";
 
 const orderByFields = [
   "createdAt",
@@ -24,19 +25,19 @@ export const TicketOrderBy = z.object({
 
 export const TicketListQuery = z
   .strictObject({
-    limit: z.number().optional(),
-    offset: z.number().optional(),
+    limit,
+    offset,
     orderBy: TicketOrderBy.optional(),
     with: TicketWithRelations.optional(),
   })
   .optional();
 
 export const TicketListRequest = zOpenApi.strictObject({
-  limit: zOpenApi.coerce.number().optional().openapi({
+  limit: limitOpenApi.openapi({
     example: 10,
     description: "Limit the number of tickets returned",
   }),
-  offset: zOpenApi.coerce.number().optional().openapi({
+  offset: offsetOpenApi.openapi({
     example: 10,
     description: "Skip the first N tickets",
   }),

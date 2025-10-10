@@ -154,6 +154,165 @@
             }
           }
         }
+      },
+      "post": {
+        "title": "Create Ticket",
+        "summary": "Create a new ticket",
+        "operationId": "createTicket",
+        "tags": [
+          "tickets"
+        ],
+        "requestBody": {
+          "description": "Ticket data to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "priority": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "customerId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assigneeId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "closedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "subject",
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ticket created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "subject": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "priority": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "customerId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "assigneeId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "closedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organizationId",
+                    "subject",
+                    "description",
+                    "status",
+                    "priority",
+                    "customerId",
+                    "assigneeId",
+                    "createdAt",
+                    "updatedAt",
+                    "closedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
       }
     },
     "/tickets/{id}": {
@@ -289,13 +448,13 @@
                   "properties": {
                     "success": {
                       "type": "boolean",
-                      "description": "Whether the deletion was successful",
-                      "example": true
+                      "example": true,
+                      "description": "Whether the deletion was successful"
                     },
                     "message": {
                       "type": "string",
-                      "description": "Success message",
-                      "example": "Ticket deleted successfully"
+                      "example": "Ticket deleted successfully",
+                      "description": "Success message"
                     }
                   },
                   "required": [
@@ -308,6 +467,103 @@
           },
           "404": {
             "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/statuses": {
+      "get": {
+        "title": "List Statuses",
+        "summary": "Get all statuses for the organization",
+        "operationId": "listStatuses",
+        "tags": [
+          "statuses"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieve the statuses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "organizationId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "color": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "organizationId",
+                      "name",
+                      "icon",
+                      "color",
+                      "createdAt",
+                      "updatedAt"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }

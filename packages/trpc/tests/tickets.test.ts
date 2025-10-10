@@ -70,11 +70,6 @@ describe("Tickets", () => {
       const result = await caller.tickets.list({ limit: 100 });
       expect(result.length).toBe(5);
     });
-
-    it("should return empty array when limit is 0", async () => {
-      const result = await caller.tickets.list({ limit: 0 });
-      expect(result.length).toBe(0);
-    });
   });
 
   describe("Offset parameter", () => {
@@ -258,9 +253,9 @@ describe("Tickets", () => {
         })
         .returning();
 
-      expect(
-        caller.tickets.get({ id: otherOrgTicket!.id })
-      ).rejects.toThrow("Ticket not found");
+      expect(caller.tickets.get({ id: otherOrgTicket!.id })).rejects.toThrow(
+        "Ticket not found"
+      );
     });
 
     it("should validate input parameter", async () => {
@@ -311,9 +306,9 @@ describe("Tickets", () => {
       expect(result.message).toBe("Ticket deleted successfully");
 
       // Verify ticket is actually deleted
-      expect(
-        caller.tickets.get({ id: ticketToDelete.id })
-      ).rejects.toThrow("Ticket not found");
+      expect(caller.tickets.get({ id: ticketToDelete.id })).rejects.toThrow(
+        "Ticket not found"
+      );
 
       // Verify remaining tickets count
       const remainingTickets = await caller.tickets.list();
@@ -348,9 +343,9 @@ describe("Tickets", () => {
         })
         .returning();
 
-      expect(
-        caller.tickets.delete({ id: otherOrgTicket!.id })
-      ).rejects.toThrow("Ticket not found");
+      expect(caller.tickets.delete({ id: otherOrgTicket!.id })).rejects.toThrow(
+        "Ticket not found"
+      );
     });
 
     it("should validate input parameter", async () => {
