@@ -13,11 +13,11 @@ export const TicketDelete = z.object({
 
 export const TicketDeleteResponse = z.object({
   success: z.boolean().openapi({
-    description: "Whether the deletion was successful",
     example: true,
+    description: "Whether the deletion was successful",
   }),
   message: z.string().openapi({
-    description: "Success message",
     example: "Ticket deleted successfully",
+    description: "Success message",
   }),
 });

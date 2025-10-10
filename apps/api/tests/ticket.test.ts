@@ -197,10 +197,13 @@ describe("Tickets", () => {
       const tickets = await listResponse.json();
       const ticketToDelete = tickets[0];
 
-      const deleteResponse = await app.request(`/tickets/${ticketToDelete.id}`, {
-        method: "DELETE",
-        headers,
-      });
+      const deleteResponse = await app.request(
+        `/tickets/${ticketToDelete.id}`,
+        {
+          method: "DELETE",
+          headers,
+        }
+      );
 
       expect(deleteResponse.status).toBe(200);
       const deleteData = await deleteResponse.json();
@@ -260,10 +263,13 @@ describe("Tickets", () => {
       const tickets = await listResponse.json();
       const ticketToDelete = tickets[1]; // Use second ticket to avoid conflicts
 
-      const deleteResponse = await app.request(`/tickets/${ticketToDelete.id}`, {
-        method: "DELETE",
-        headers,
-      });
+      const deleteResponse = await app.request(
+        `/tickets/${ticketToDelete.id}`,
+        {
+          method: "DELETE",
+          headers,
+        }
+      );
 
       expect(deleteResponse.status).toBe(200);
       const data = await deleteResponse.json();

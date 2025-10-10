@@ -1,22 +1,47 @@
 import { tickets } from "@repo/db/schema";
-import { TicketGet, TicketListQuery, TicketDelete, TicketDeleteResponse } from "@repo/validators";
+import {
+  TicketCreate,
+  TicketDelete,
+  TicketGet,
+  TicketListQuery,
+  Ticket,
+} from "@repo/validators";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 
 export const ticketsRouter = router({
-  get: protectedProcedure
-    .input(TicketGet)
-    .query(async ({ ctx, input }) => {
-      const { id } = input;
-      const ticket = await ctx.db.rls((tx) =>
-        tx.query.tickets.findFirst({ where: eq(tickets.id, id) })
+  create: protectedProcedure
+    .input(TicketCreate)
+    .output(Ticket)
+    .mutation(async ({ ctx, input }) => {
+      const { activeOrganizationId } = ctx.session;
+      const result = await ctx.db.rls((tx) =>
+        tx
+          .insert(tickets)
+          .values({ ...input, organizationId: activeOrganizationId })
+          .returning()
       );
-      if (!ticket) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Ticket not found" });
+
+      if (!result || result.length === 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create ticket",
+        });
       }
-      return ticket;
+
+      return result[0]!;
     }),
+  get: protectedProcedure.input(TicketGet).query(async ({ ctx, input }) => {
+    const { id } = input;
+    const ticket = await ctx.db.rls((tx) =>
+      tx.query.tickets.findFirst({ where: eq(tickets.id, id) })
+    );
+    if (!ticket) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Ticket not found" });
+    }
+    return ticket;
+  }),
   list: protectedProcedure
     .input(TicketListQuery)
     .query(async ({ ctx, input }) => {
@@ -40,14 +65,13 @@ export const ticketsRouter = router({
     }),
   delete: protectedProcedure
     .input(TicketDelete)
-    .output(TicketDeleteResponse)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
       // First check if ticket exists and belongs to the organization
       const ticket = await ctx.db.rls((tx) =>
         tx.query.tickets.findFirst({
-          where: eq(tickets.id, id)
+          where: eq(tickets.id, id),
         })
       );
 
@@ -56,9 +80,7 @@ export const ticketsRouter = router({
       }
 
       // Delete the ticket
-      await ctx.db.rls((tx) =>
-        tx.delete(tickets).where(eq(tickets.id, id))
-      );
+      await ctx.db.rls((tx) => tx.delete(tickets).where(eq(tickets.id, id)));
 
       return {
         success: true,

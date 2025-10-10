@@ -1,6 +1,9 @@
 import { createSchemaFactory } from "drizzle-zod";
 import { z as zOpenApi } from "@hono/zod-openapi";
 
-export const { createSelectSchema } = createSchemaFactory({
+const schemaFactory = createSchemaFactory({
   zodInstance: zOpenApi,
 });
+
+export const createSelectSchema = schemaFactory.createSelectSchema;
+export const createInsertSchema = schemaFactory.createInsertSchema;
