@@ -1,31 +1,34 @@
-import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { createTrpcCaller } from "@repo/trpc";
-import {
-  ticketListRequestQuery,
-  ticketListResponseSchema,
-} from "@repo/validators";
-import { Hono } from "hono";
+import { ticketListRequestQuery, ticketListSchema } from "@repo/validators";
 
-const tickets = new Hono();
+const tickets = new OpenAPIHono();
 
-tickets.get(
-  "/",
-  zValidator("query", ticketListRequestQuery),
-  describeRoute({
+tickets.openapi(
+  createRoute({
+    method: "get",
+    title: "List Tickets",
+    summary: "Get all tickets",
+    operationId: "listTickets",
+    path: "/",
+    tags: ["tickets"],
+    request: {
+      params: ticketListRequestQuery,
+    },
     responses: {
       200: {
-        description: "List of tickets",
         content: {
           "application/json": {
-            schema: resolver(ticketListResponseSchema),
+            schema: ticketListSchema,
           },
         },
+        description: "Retrieve the tickets",
       },
     },
   }),
   async (c) => {
     const caller = createTrpcCaller({ headers: c.req.raw.headers });
-    const query = c.req.valid("query");
+    const query = c.req.query();
     const data = await caller.tickets.list(query);
     return c.json(data);
   }

@@ -1,8 +1,17 @@
-import { Hono } from "hono";
+import { OpenAPIHono } from "@hono/zod-openapi";
+
 import { tickets } from "./tickets";
 
-const restApi = new Hono();
+const openapi = new OpenAPIHono();
 
-restApi.route("/tickets", tickets);
+openapi.route("/tickets", tickets);
 
-export { restApi };
+openapi.doc("/docs", {
+  openapi: "3.0.0",
+  info: {
+    version: "1.0.0",
+    title: "My API",
+  },
+});
+
+export { openapi };

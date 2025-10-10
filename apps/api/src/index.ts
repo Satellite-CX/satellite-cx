@@ -1,12 +1,11 @@
-import { Hono } from "hono";
-import { corsMiddleware } from "./utils/cors";
 import { trpcServer } from "@hono/trpc-server";
-import { appRouter, createTRPCContext } from "@repo/trpc";
-import { logger } from "hono/logger";
 import { auth } from "@repo/db/auth";
+import { appRouter, createTRPCContext } from "@repo/trpc";
 import { env } from "@repo/validators";
-import { openAPIRouteHandler } from "hono-openapi";
-import { restApi } from "./routes";
+import { Hono } from "hono";
+import { logger } from "hono/logger";
+import { openapi } from "./routes";
+import { corsMiddleware } from "./utils/cors";
 
 const app = new Hono();
 
@@ -40,20 +39,7 @@ app.use(
   })
 );
 
-app.route("/", restApi);
-
-app.get(
-  "/openapi.json",
-  openAPIRouteHandler(restApi, {
-    documentation: {
-      info: {
-        title: "Satellite CX",
-        version: "1.0.0",
-        description: "API for Satellite CX",
-      },
-    },
-  })
-);
+app.route("/", openapi);
 
 app.notFound((c) => {
   return c.json({ ok: false, error: "Not Found", status: 404 }, 404);

@@ -26,6 +26,9 @@ importers:
       '@hono/trpc-server':
         specifier: ^0.4.0
         version: 0.4.0(@trpc/server@11.5.1(typescript@5.9.2))(hono@4.9.9)
+      '@hono/zod-openapi':
+        specifier: ^1.1.3
+        version: 1.1.3(hono@4.9.9)(zod@4.1.11)
       '@repo/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -46,7 +49,7 @@ importers:
         version: 4.9.9
       hono-openapi:
         specifier: ^1.1.0
-        version: 1.1.0(@hono/standard-validator@0.1.5(@standard-schema/spec@1.0.0)(hono@4.9.9))(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11))(@standard-community/standard-openapi@0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11))(@types/json-schema@7.0.15)(hono@4.9.9)(openapi-types@12.1.3)
+        version: 1.1.0(@hono/standard-validator@0.1.5(@standard-schema/spec@1.0.0)(hono@4.9.9))(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11))(@standard-community/standard-openapi@0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11))(@types/json-schema@7.0.15)(hono@4.9.9)(openapi-types@12.1.3)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:^
@@ -201,6 +204,9 @@ importers:
 
   packages/trpc:
     dependencies:
+      '@hono/zod-openapi':
+        specifier: ^1.1.3
+        version: 1.1.3(hono@4.9.9)(zod@4.1.11)
       '@repo/db':
         specifier: workspace:*
         version: link:../db
@@ -217,8 +223,8 @@ importers:
         specifier: 2.2.1
         version: 2.2.1
       zod:
-        specifier: ^4.1.5
-        version: 4.1.5
+        specifier: ^4.1.11
+        version: 4.1.11
     devDependencies:
       '@faker-js/faker':
         specifier: ^10.0.0
@@ -269,19 +275,22 @@ importers:
 
   packages/validators:
     dependencies:
+      '@hono/zod-openapi':
+        specifier: ^1.1.3
+        version: 1.1.3(hono@4.9.9)(zod@4.1.11)
       '@repo/db':
         specifier: workspace:*
         version: link:../db
       zod:
-        specifier: ^4.1.5
-        version: 4.1.5
+        specifier: ^4.1.11
+        version: 4.1.11
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint-config
       '@types/node':
         specifier: latest
-        version: 24.6.2
+        version: 24.7.0
 
   tooling/eslint-config:
     dependencies:
@@ -340,6 +349,11 @@ packages:
   '@apidevtools/json-schema-ref-parser@11.9.3':
     resolution: {integrity: sha512-60vepv88RwcJtSHrD6MjIL6Ta3SOYbgfnkHb+ppAVK+o9mXprRtulx7VlRl3lN3bbvysAfCS7WMVfhUYemB0IQ==}
     engines: {node: '>= 16'}
+
+  '@asteasolutions/zod-to-openapi@8.1.0':
+    resolution: {integrity: sha512-tQFxVs05J/6QXXqIzj6rTRk3nj1HFs4pe+uThwE95jL5II2JfpVXkK+CqkO7aT0Do5AYqO6LDrKpleLUFXgY+g==}
+    peerDependencies:
+      zod: ^4.0.0
 
   '@better-auth/core@1.3.18':
     resolution: {integrity: sha512-eVTpiyFOA70SecGuiXs2qxQq1oWbEiLJMpyOYF8HAHFXHH+iK0Ab8F0stdyJTTYOc9ydjFQgYXmbENG6JqQ3UA==}
@@ -878,6 +892,19 @@ packages:
     peerDependencies:
       '@trpc/server': ^10.10.0 || >11.0.0-rc
       hono: '>=4.*'
+
+  '@hono/zod-openapi@1.1.3':
+    resolution: {integrity: sha512-ikA8p0Jt7yplxOqbYwdh8rCQWaGN4bu8zK1HbCWqfWT9clo87L32D0eAQ/r0tJodtZbTV5d1vPB75FCkUt1Jdg==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      hono: '>=4.3.6'
+      zod: ^4.0.0
+
+  '@hono/zod-validator@0.7.3':
+    resolution: {integrity: sha512-uYGdgVib3RlGD698WR5dVM0zB3UuPY5vHKXffGUbUh7r4xY+mFIhF3/v4AcQVLrU5CQdBso8BJr4wuVoCrjTuQ==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.25.0 || ^4.0.0
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1936,6 +1963,9 @@ packages:
 
   '@types/node@24.6.2':
     resolution: {integrity: sha512-d2L25Y4j+W3ZlNAeMKcy7yDsK425ibcAOO2t7aPTz6gNMH0z2GThtwENCDc0d/Pw9wgyRqE5Px1wkV7naz8ang==}
+
+  '@types/node@24.7.0':
+    resolution: {integrity: sha512-IbKooQVqUBrlzWTi79E8Fw78l8k1RNtlDDNWsFZs7XonuQSJ8oNYfEeclhprUldXISRMLzBpILuKgPlIxm+/Yw==}
 
   '@types/pg@8.15.5':
     resolution: {integrity: sha512-LF7lF6zWEKxuT3/OR8wAZGzkg4ENGXFNyiV/JeOt9z5B+0ZVwbql9McqX5c/WStFq1GaGso7H1AzP/qSzmlCKQ==}
@@ -3148,6 +3178,9 @@ packages:
   get-tsconfig@4.10.1:
     resolution: {integrity: sha512-auHyJ4AgMz7vgS8Hp3N6HXSmlMdUyhSUrfBF16w153rxtLIEOE+HGqaBppczZvnHLqQJfiHotCYpNhl0lUROFQ==}
 
+  get-tsconfig@4.12.0:
+    resolution: {integrity: sha512-LScr2aNr2FbjAjZh2C6X6BxRx1/x+aTDExct/xyq2XKbYOiG5c0aK7pMsSuyc0brz3ibr/lbQiHD9jzt4lccJw==}
+
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
 
@@ -3884,6 +3917,9 @@ packages:
   openapi-types@12.1.3:
     resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
 
+  openapi3-ts@4.5.0:
+    resolution: {integrity: sha512-jaL+HgTq2Gj5jRcfdutgRGLosCy/hT8sQf6VOy+P+g36cZOjI1iukdPnijC+4CmeRzg/jEllJUboEic2FhxhtQ==}
+
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -4515,6 +4551,9 @@ packages:
   undici-types@7.13.0:
     resolution: {integrity: sha512-Ov2Rr9Sx+fRgagJ5AX0qvItZG/JKKoBRAVITs1zk7IqZGTJUwgUr7qoYBpWwakpWilTZFM98rG/AFRocu10iIQ==}
 
+  undici-types@7.14.0:
+    resolution: {integrity: sha512-QQiYxHuyZ9gQUIrmPo3IA+hUl4KYk8uSA7cHrcKd/l3p1OTpZcM0Tbp9x7FAtXdAYhlasd60ncPpgu6ihG6TOA==}
+
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
 
@@ -4662,6 +4701,11 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
+  zod-to-json-schema@3.24.6:
+    resolution: {integrity: sha512-h/z3PKvcTcTetyjl1fkj79MHNEjm+HpD6NXheWjzOekY7kV+lwDYnHw+ivHkijnCSMz1yJaWBD9vu/Fcmk+vEg==}
+    peerDependencies:
+      zod: ^3.24.1
+
   zod@3.24.1:
     resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
@@ -4683,6 +4727,11 @@ snapshots:
       '@jsdevtools/ono': 7.1.3
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.0
+
+  '@asteasolutions/zod-to-openapi@8.1.0(zod@4.1.11)':
+    dependencies:
+      openapi3-ts: 4.5.0
+      zod: 4.1.11
 
   '@better-auth/core@1.3.18': {}
 
@@ -5020,6 +5069,19 @@ snapshots:
     dependencies:
       '@trpc/server': 11.5.1(typescript@5.9.2)
       hono: 4.9.9
+
+  '@hono/zod-openapi@1.1.3(hono@4.9.9)(zod@4.1.11)':
+    dependencies:
+      '@asteasolutions/zod-to-openapi': 8.1.0(zod@4.1.11)
+      '@hono/zod-validator': 0.7.3(hono@4.9.9)(zod@4.1.11)
+      hono: 4.9.9
+      openapi3-ts: 4.5.0
+      zod: 4.1.11
+
+  '@hono/zod-validator@0.7.3(hono@4.9.9)(zod@4.1.11)':
+    dependencies:
+      hono: 4.9.9
+      zod: 4.1.11
 
   '@humanfs/core@0.19.1': {}
 
@@ -5872,17 +5934,18 @@ snapshots:
       '@peculiar/asn1-x509': 2.5.0
       '@peculiar/x509': 1.14.0
 
-  '@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11)':
+  '@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11)':
     dependencies:
       '@standard-schema/spec': 1.0.0
       '@types/json-schema': 7.0.15
       quansync: 0.2.11
     optionalDependencies:
       zod: 4.1.11
+      zod-to-json-schema: 3.24.6(zod@4.1.11)
 
-  '@standard-community/standard-openapi@0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11)':
+  '@standard-community/standard-openapi@0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11)':
     dependencies:
-      '@standard-community/standard-json': 0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11)
+      '@standard-community/standard-json': 0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11)
       '@standard-schema/spec': 1.0.0
       openapi-types: 12.1.3
     optionalDependencies:
@@ -6047,6 +6110,10 @@ snapshots:
   '@types/node@24.6.2':
     dependencies:
       undici-types: 7.13.0
+
+  '@types/node@24.7.0':
+    dependencies:
+      undici-types: 7.14.0
 
   '@types/pg@8.15.5':
     dependencies:
@@ -6629,7 +6696,7 @@ snapshots:
 
   bun-types@1.2.23(@types/react@19.2.0):
     dependencies:
-      '@types/node': 24.6.2
+      '@types/node': 24.7.0
       '@types/react': 19.2.0
 
   call-bind-apply-helpers@1.0.2:
@@ -7555,6 +7622,11 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
+  get-tsconfig@4.12.0:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
+    optional: true
+
   github-slugger@2.0.0: {}
 
   glob-parent@5.1.2:
@@ -7672,10 +7744,10 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
-  hono-openapi@1.1.0(@hono/standard-validator@0.1.5(@standard-schema/spec@1.0.0)(hono@4.9.9))(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11))(@standard-community/standard-openapi@0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11))(@types/json-schema@7.0.15)(hono@4.9.9)(openapi-types@12.1.3):
+  hono-openapi@1.1.0(@hono/standard-validator@0.1.5(@standard-schema/spec@1.0.0)(hono@4.9.9))(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11))(@standard-community/standard-openapi@0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11))(@types/json-schema@7.0.15)(hono@4.9.9)(openapi-types@12.1.3):
     dependencies:
-      '@standard-community/standard-json': 0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11)
-      '@standard-community/standard-openapi': 0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11)
+      '@standard-community/standard-json': 0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11)
+      '@standard-community/standard-openapi': 0.2.8(@standard-community/standard-json@0.3.5(@standard-schema/spec@1.0.0)(@types/json-schema@7.0.15)(quansync@0.2.11)(zod-to-json-schema@3.24.6(zod@4.1.11))(zod@4.1.11))(@standard-schema/spec@1.0.0)(openapi-types@12.1.3)(zod@4.1.11)
       '@types/json-schema': 7.0.15
       openapi-types: 12.1.3
     optionalDependencies:
@@ -8547,6 +8619,10 @@ snapshots:
 
   openapi-types@12.1.3: {}
 
+  openapi3-ts@4.5.0:
+    dependencies:
+      yaml: 2.8.0
+
   optionator@0.9.4:
     dependencies:
       deep-is: 0.1.4
@@ -9219,7 +9295,7 @@ snapshots:
   tsx@4.20.6:
     dependencies:
       esbuild: 0.25.10
-      get-tsconfig: 4.10.1
+      get-tsconfig: 4.12.0
     optionalDependencies:
       fsevents: 2.3.3
     optional: true
@@ -9317,6 +9393,8 @@ snapshots:
   uncrypto@0.1.3: {}
 
   undici-types@7.13.0: {}
+
+  undici-types@7.14.0: {}
 
   unified@11.0.5:
     dependencies:
@@ -9490,6 +9568,11 @@ snapshots:
   yaml@2.8.0: {}
 
   yocto-queue@0.1.0: {}
+
+  zod-to-json-schema@3.24.6(zod@4.1.11):
+    dependencies:
+      zod: 4.1.11
+    optional: true
 
   zod@3.24.1: {}
 
