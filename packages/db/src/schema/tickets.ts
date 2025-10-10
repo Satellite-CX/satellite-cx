@@ -40,6 +40,8 @@ export const ticketAudits = pgTable("ticket_audit", {
   createdAt,
 });
 
+export type TicketAudit = typeof ticketAudits.$inferSelect;
+
 export const ticketsRelations = relations(tickets, ({ one }) => ({
   status: one(statuses, {
     fields: [tickets.status],
