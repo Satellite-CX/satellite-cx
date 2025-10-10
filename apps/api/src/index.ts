@@ -3,7 +3,7 @@ import { auth } from "@repo/db/auth";
 import { appRouter, createTRPCContext } from "@repo/trpc";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { openapi } from "./routes";
+import { openapi } from "./openapi";
 import { corsMiddleware } from "./utils/cors";
 
 const app = new Hono();
@@ -20,7 +20,7 @@ app.use("*", corsMiddleware);
 
 // Global error handler for tRPC errors
 app.onError((err, c) => {
-  if (err && typeof err === 'object' && 'code' in err) {
+  if (err && typeof err === "object" && "code" in err) {
     const error = err as any;
     if (error.code === "NOT_FOUND") {
       return c.json({ error: error.message }, 404);

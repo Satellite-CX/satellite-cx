@@ -5,18 +5,31 @@
     "title": "My API"
   },
   "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication. Example: `scx_12345abcd`"
+      }
+    },
     "schemas": {},
     "parameters": {}
   },
   "paths": {
     "/tickets": {
       "get": {
-        "title": "List Tickets",
-        "summary": "Get many tickets",
-        "operationId": "listTickets",
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
         "tags": [
           "tickets"
         ],
+        "title": "List Tickets",
+        "summary": "Get many tickets",
+        "operationId": "listTickets",
         "x-codeSamples": [
           {
             "lang": "js",
@@ -27,10 +40,9 @@
         "parameters": [
           {
             "schema": {
-              "type": [
-                "number",
-                "null"
-              ],
+              "type": "number",
+              "minimum": 1,
+              "maximum": 100,
               "example": 10,
               "description": "Limit the number of tickets returned"
             },
@@ -45,6 +57,8 @@
                 "number",
                 "null"
               ],
+              "minimum": 0,
+              "maximum": 100,
               "example": 10,
               "description": "Skip the first N tickets"
             },
@@ -156,12 +170,17 @@
         }
       },
       "post": {
-        "title": "Create Ticket",
-        "summary": "Create a new ticket",
-        "operationId": "createTicket",
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
         "tags": [
           "tickets"
         ],
+        "title": "Create Ticket",
+        "summary": "Create a new ticket",
+        "operationId": "createTicket",
         "requestBody": {
           "description": "Ticket data to create",
           "content": {
@@ -317,12 +336,17 @@
     },
     "/tickets/{id}": {
       "get": {
-        "title": "Get Ticket",
-        "summary": "Get a ticket",
-        "operationId": "getTicket",
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
         "tags": [
           "tickets"
         ],
+        "title": "Get Ticket",
+        "summary": "Get a ticket",
+        "operationId": "getTicket",
         "parameters": [
           {
             "schema": {
@@ -419,12 +443,17 @@
         }
       },
       "delete": {
-        "title": "Delete Ticket",
-        "summary": "Delete a ticket",
-        "operationId": "deleteTicket",
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
         "tags": [
           "tickets"
         ],
+        "title": "Delete Ticket",
+        "summary": "Delete a ticket",
+        "operationId": "deleteTicket",
         "parameters": [
           {
             "schema": {
@@ -474,7 +503,7 @@
     "/statuses": {
       "get": {
         "title": "List Statuses",
-        "summary": "Get all statuses for the organization",
+        "summary": "Get many statuses",
         "operationId": "listStatuses",
         "tags": [
           "statuses"
@@ -482,25 +511,30 @@
         "parameters": [
           {
             "schema": {
-              "type": "integer",
+              "type": "number",
               "minimum": 1,
               "maximum": 100,
-              "default": 50
+              "example": 20,
+              "description": "Limit the number of statuses returned"
             },
             "required": false,
+            "description": "Limit the number of statuses returned",
             "name": "limit",
             "in": "query"
           },
           {
             "schema": {
               "type": [
-                "integer",
+                "number",
                 "null"
               ],
               "minimum": 0,
-              "default": 0
+              "maximum": 100,
+              "example": 0,
+              "description": "Skip the first N statuses"
             },
             "required": false,
+            "description": "Skip the first N statuses",
             "name": "offset",
             "in": "query"
           }

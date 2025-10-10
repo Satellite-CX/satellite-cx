@@ -5,10 +5,17 @@ import { statuses } from "./statuses";
 
 const openapi = new OpenAPIHono();
 
+openapi.openAPIRegistry.registerComponent("securitySchemes", "ApiKey", {
+  type: "apiKey",
+  in: "header",
+  name: "X-API-Key",
+  description: "API key for authentication. Example: `scx_12345abcd`",
+});
+
 openapi.route("/tickets", tickets);
 openapi.route("/statuses", statuses);
 
-openapi.doc("/docs", {
+openapi.doc("/openapi", {
   openapi: "3.0.0",
   info: {
     version: "1.0.0",

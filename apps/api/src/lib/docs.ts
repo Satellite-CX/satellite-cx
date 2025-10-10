@@ -1,4 +1,4 @@
-import { openapi } from "../routes";
+import { openapi } from "../openapi";
 import type { OpenAPIV3_1 } from "openapi-types";
 
 export const openapiDocument = openapi.getOpenAPI31Document({
