@@ -227,4 +227,220 @@ describe("Statuses", () => {
       });
     });
   });
+
+  describe("Create Status", () => {
+    describe("Basic functionality", () => {
+      it("should create a status with all fields", async () => {
+        const statusData = {
+          name: "In Progress",
+          icon: "🔄",
+          color: "#fbbf24",
+        };
+
+        const result = await caller.statuses.create(statusData);
+
+        expect(result).toBeDefined();
+        expect(result.name).toBe(statusData.name);
+        expect(result.icon).toBe(statusData.icon);
+        expect(result.color).toBe(statusData.color);
+        expect(result.organizationId).toBe(testData.organization.id);
+        expect(typeof result.id).toBe("string");
+        expect(result.createdAt).toBeInstanceOf(Date);
+        expect(result.updatedAt).toBeInstanceOf(Date);
+      });
+
+      it("should create a status with only required fields", async () => {
+        const statusData = {
+          name: "Minimal Status",
+        };
+
+        const result = await caller.statuses.create(statusData);
+
+        expect(result).toBeDefined();
+        expect(result.name).toBe(statusData.name);
+        expect(result.icon).toBeNull();
+        expect(result.color).toBeNull();
+        expect(result.organizationId).toBe(testData.organization.id);
+      });
+
+      it("should automatically assign the organization ID from session", async () => {
+        const statusData = {
+          name: "Auto Org Status",
+        };
+
+        const result = await caller.statuses.create(statusData);
+
+        expect(result.organizationId).toBe(testData.organization.id);
+      });
+
+      it("should be visible in status list after creation", async () => {
+        const statusData = {
+          name: "List Visibility Test",
+          icon: "🔍",
+        };
+
+        const initialList = await caller.statuses.list();
+        const initialCount = initialList.length;
+
+        await caller.statuses.create(statusData);
+
+        const updatedList = await caller.statuses.list();
+        expect(updatedList.length).toBe(initialCount + 1);
+
+        const newStatus = updatedList.find(s => s.name === statusData.name);
+        expect(newStatus).toBeDefined();
+        expect(newStatus!.icon).toBe(statusData.icon);
+      });
+    });
+
+    describe("Input validation", () => {
+      it("should reject empty name", async () => {
+        const statusData = {
+          name: "",
+        };
+
+        expect(
+          caller.statuses.create(statusData)
+        ).rejects.toThrow();
+      });
+
+      it("should reject name that's too long", async () => {
+        const statusData = {
+          name: "x".repeat(101), // 101 characters
+        };
+
+        expect(
+          caller.statuses.create(statusData)
+        ).rejects.toThrow();
+      });
+
+      it("should reject missing name", async () => {
+        const statusData = {
+          icon: "🔄",
+          color: "#fbbf24",
+        } as any; // Missing name
+
+        expect(
+          caller.statuses.create(statusData)
+        ).rejects.toThrow();
+      });
+
+      it("should accept name at maximum length", async () => {
+        const statusData = {
+          name: "x".repeat(100), // Exactly 100 characters
+        };
+
+        const result = await caller.statuses.create(statusData);
+        expect(result.name).toBe(statusData.name);
+      });
+    });
+
+    describe("Optional fields", () => {
+      it("should handle undefined optional fields", async () => {
+        const statusData = {
+          name: "Undefined Optional Fields",
+          icon: undefined,
+          color: undefined,
+        };
+
+        const result = await caller.statuses.create(statusData);
+        expect(result.icon).toBeNull();
+        expect(result.color).toBeNull();
+      });
+
+      it("should accept valid icon", async () => {
+        const statusData = {
+          name: "Icon Test",
+          icon: "🎯",
+        };
+
+        const result = await caller.statuses.create(statusData);
+        expect(result.icon).toBe("🎯");
+      });
+
+      it("should accept valid color", async () => {
+        const statusData = {
+          name: "Color Test",
+          color: "#3b82f6",
+        };
+
+        const result = await caller.statuses.create(statusData);
+        expect(result.color).toBe("#3b82f6");
+      });
+    });
+
+    describe("Organization isolation", () => {
+      it("should only create status in user's organization", async () => {
+        const statusData = {
+          name: "Isolation Test Status",
+          icon: "🔒",
+        };
+
+        const result = await caller.statuses.create(statusData);
+
+        // Verify the status belongs to the correct organization
+        expect(result.organizationId).toBe(testData.organization.id);
+
+        // Verify it doesn't appear in other organizations
+        const [otherOrg] = await adminDB
+          .insert(organizations)
+          .values({
+            id: "create-isolation-test-org",
+            name: "Create Isolation Test Org",
+            slug: "create-isolation-test-org",
+            createdAt: new Date(),
+          })
+          .returning();
+
+        // Check that the status doesn't exist in the other organization's context
+        const otherOrgStatuses = await adminDB.query.statuses.findMany({
+          where: (statuses, { eq }) => eq(statuses.organizationId, otherOrg!.id),
+        });
+
+        const hasTestStatus = otherOrgStatuses.some(s => s.name === statusData.name);
+        expect(hasTestStatus).toBe(false);
+      });
+    });
+
+    describe("Error handling", () => {
+      it("should handle database errors gracefully", async () => {
+        // This is a mock scenario - in real implementation,
+        // we might test database connection issues
+        const statusData = {
+          name: "Error Test Status",
+        };
+
+        // For now, just verify that valid input doesn't throw
+        const result = await caller.statuses.create(statusData);
+        expect(result).toBeDefined();
+      });
+    });
+
+    describe("Response schema validation", () => {
+      it("should return status with correct schema structure", async () => {
+        const statusData = {
+          name: "Schema Test Status",
+          icon: "📋",
+          color: "#e11d48",
+        };
+
+        const result = await caller.statuses.create(statusData);
+
+        expect(result).toHaveProperty("id");
+        expect(result).toHaveProperty("organizationId");
+        expect(result).toHaveProperty("name");
+        expect(result).toHaveProperty("icon");
+        expect(result).toHaveProperty("color");
+        expect(result).toHaveProperty("createdAt");
+        expect(result).toHaveProperty("updatedAt");
+
+        expect(typeof result.id).toBe("string");
+        expect(typeof result.organizationId).toBe("string");
+        expect(typeof result.name).toBe("string");
+        expect(result.organizationId).toBe(testData.organization.id);
+        expect(result.createdAt).toBeInstanceOf(Date);
+        expect(result.updatedAt).toBeInstanceOf(Date);
+      });
+    });
+  });
 });

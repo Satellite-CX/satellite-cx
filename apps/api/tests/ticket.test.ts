@@ -13,6 +13,7 @@ describe("Tickets", () => {
 
   beforeAll(async () => {
     testData = await generateTestData();
+
     await seedDatabase({
       testData,
       ticketCount: 12,

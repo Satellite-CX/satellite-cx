@@ -1,3 +1,5 @@
+import { adminDB } from "@repo/db/client";
+import { organizations, Status, statuses } from "@repo/db/schema";
 import {
   generateTestData,
   resetDatabase,
@@ -5,20 +7,19 @@ import {
 } from "@repo/db/test-utils";
 import { afterAll, beforeAll, describe, expect, it, test } from "bun:test";
 import { app } from "../src";
-import { adminDB } from "@repo/db/client";
-import { statuses, organizations, Status } from "@repo/db/schema";
 
 describe("Statuses", () => {
-  let headers: Headers;
+  let headers: Record<string, string>;
+
   let testData: Awaited<ReturnType<typeof generateTestData>>;
 
   beforeAll(async () => {
     testData = await generateTestData();
     await seedDatabase(testData);
 
-    headers = new Headers({
+    headers = {
       "x-api-key": testData.apiKey.key,
-    });
+    };
   });
 
   afterAll(async () => {
@@ -247,20 +248,6 @@ describe("Statuses", () => {
       });
     });
 
-    describe("HTTP methods", () => {
-      it("should only accept GET requests", async () => {
-        const methods = ["POST", "PUT", "PATCH", "DELETE"];
-
-        for (const method of methods) {
-          const response = await app.request("/statuses", {
-            method,
-            headers,
-          });
-          expect(response.status).toBe(404);
-        }
-      });
-    });
-
     describe("Content-Type and Response Format", () => {
       it("should return JSON content type", async () => {
         const response = await app.request("/statuses", {
@@ -307,6 +294,59 @@ describe("Statuses", () => {
         });
         expect(response.status).toBe(400);
       });
+    });
+  });
+
+  describe("POST /statuses", () => {
+    it("should create a status with all fields", async () => {
+      const statusData = {
+        name: "In Progress",
+        icon: "🔄",
+        color: "#fbbf24",
+      };
+
+      const response = await app.request("/statuses", {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(statusData),
+      });
+
+      expect(response.status).toBe(201);
+      const data = await response.json();
+
+      expect(data.name).toBe(statusData.name);
+      expect(data.icon).toBe(statusData.icon);
+      expect(data.color).toBe(statusData.color);
+      expect(data.organizationId).toBe(testData.organization.id);
+      expect(typeof data.id).toBe("string");
+      expect(data.createdAt).toBeDefined();
+      expect(data.updatedAt).toBeDefined();
+    });
+
+    it("should create a status with only required fields", async () => {
+      const statusData = {
+        name: "Minimal Status",
+      };
+
+      const response = await app.request("/statuses", {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(statusData),
+      });
+
+      expect(response.status).toBe(201);
+      const data = await response.json();
+
+      expect(data.name).toBe(statusData.name);
+      expect(data.icon).toBeNull();
+      expect(data.color).toBeNull();
+      expect(data.organizationId).toBe(testData.organization.id);
     });
   });
 });
