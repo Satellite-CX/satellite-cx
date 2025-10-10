@@ -1,6 +1,6 @@
 import { z as zOpenApi } from "@hono/zod-openapi";
 import { z } from "zod";
-import { ticketSchema } from "./schema";
+import { Ticket } from "./schema";
 
 const orderByFields = [
   "createdAt",
@@ -10,28 +10,28 @@ const orderByFields = [
   "description",
 ] as const;
 
-export const ticketWithRelations = z.object({
+export const TicketWithRelations = z.object({
   status: z.literal(true).optional(),
   priority: z.literal(true).optional(),
   customerId: z.literal(true).optional(),
   assigneeId: z.literal(true).optional(),
 });
 
-export const ticketOrderBy = z.object({
+export const TicketOrderBy = z.object({
   field: z.enum(orderByFields),
   direction: z.enum(["asc", "desc"]),
 });
 
-export const ticketListQueryTrpcInput = z
+export const TicketListQuery = z
   .strictObject({
     limit: z.number().optional(),
     offset: z.number().optional(),
-    orderBy: ticketOrderBy.optional(),
-    with: ticketWithRelations.optional(),
+    orderBy: TicketOrderBy.optional(),
+    with: TicketWithRelations.optional(),
   })
   .optional();
 
-export const ticketListRequestQuery = zOpenApi.strictObject({
+export const TicketListRequest = zOpenApi.strictObject({
   limit: zOpenApi.coerce.number().optional().openapi({
     example: 10,
     description: "Limit the number of tickets returned",
@@ -49,7 +49,7 @@ export const ticketListRequestQuery = zOpenApi.strictObject({
         throw new Error("Invalid JSON format for orderBy");
       }
     })
-    .pipe(ticketOrderBy)
+    .pipe(TicketOrderBy)
     .optional(),
   with: zOpenApi
     .string()
@@ -57,8 +57,8 @@ export const ticketListRequestQuery = zOpenApi.strictObject({
       const fields = val.split(",").map((r) => r.trim());
       return Object.fromEntries(fields.map((field) => [field, true]));
     })
-    .pipe(ticketWithRelations)
+    .pipe(TicketWithRelations)
     .optional(),
 });
 
-export const ticketListSchema = ticketSchema.array();
+export const TicketList = Ticket.array();

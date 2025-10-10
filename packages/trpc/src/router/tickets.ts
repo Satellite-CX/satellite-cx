@@ -1,12 +1,12 @@
 import { tickets } from "@repo/db/schema";
-import { ticketGetSchema, ticketListQueryTrpcInput, ticketDeleteSchema, ticketDeleteResponseSchema } from "@repo/validators";
+import { TicketGet, TicketListQuery, TicketDelete, TicketDeleteResponse } from "@repo/validators";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 
 export const ticketsRouter = router({
   get: protectedProcedure
-    .input(ticketGetSchema)
+    .input(TicketGet)
     .query(async ({ ctx, input }) => {
       const { id } = input;
       const ticket = await ctx.db.rls((tx) =>
@@ -18,7 +18,7 @@ export const ticketsRouter = router({
       return ticket;
     }),
   list: protectedProcedure
-    .input(ticketListQueryTrpcInput)
+    .input(TicketListQuery)
     .query(async ({ ctx, input }) => {
       const { limit, offset, orderBy, with: withParams } = input ?? {};
       return await ctx.db.rls((tx) =>
@@ -39,8 +39,8 @@ export const ticketsRouter = router({
       );
     }),
   delete: protectedProcedure
-    .input(ticketDeleteSchema)
-    .output(ticketDeleteResponseSchema)
+    .input(TicketDelete)
+    .output(TicketDeleteResponse)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 

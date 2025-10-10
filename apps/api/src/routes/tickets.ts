@@ -1,12 +1,12 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { createTrpcCaller } from "@repo/trpc";
 import {
-  ticketGetSchema,
-  ticketListRequestQuery,
-  ticketListSchema,
-  ticketSchema,
-  ticketDeleteSchema,
-  ticketDeleteResponseSchema,
+  TicketGet,
+  TicketListRequest,
+  TicketList,
+  Ticket,
+  TicketDelete,
+  TicketDeleteResponse,
 } from "@repo/validators";
 
 const tickets = new OpenAPIHono();
@@ -27,13 +27,13 @@ tickets.openapi(
       },
     ],
     request: {
-      query: ticketListRequestQuery,
+      query: TicketListRequest,
     },
     responses: {
       200: {
         content: {
           "application/json": {
-            schema: ticketListSchema,
+            schema: TicketList,
           },
         },
         description: "Retrieve the tickets",
@@ -57,13 +57,13 @@ tickets.openapi(
     path: "/{id}",
     tags: ["tickets"],
     request: {
-      params: ticketGetSchema,
+      params: TicketGet,
     },
     responses: {
       200: {
         content: {
           "application/json": {
-            schema: ticketSchema,
+            schema: Ticket,
           },
         },
         description: "Retrieve a single ticket",
@@ -86,13 +86,13 @@ tickets.openapi(
     path: "/{id}",
     tags: ["tickets"],
     request: {
-      params: ticketDeleteSchema,
+      params: TicketDelete,
     },
     responses: {
       200: {
         content: {
           "application/json": {
-            schema: ticketDeleteResponseSchema,
+            schema: TicketDeleteResponse,
           },
         },
         description: "Ticket deleted successfully",
