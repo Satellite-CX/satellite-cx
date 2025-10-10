@@ -117,6 +117,35 @@ The database implements a multi-tenant architecture with organization-based isol
 - RLS policies applied automatically via custom scripts
 - Database studio available: `pnpm --filter @repo/db dev`
 
+### OpenAPI Documentation Generation
+
+The project uses an automated flow to generate API documentation from Zod schemas:
+
+**1. Schema Definition** (`packages/validators/`)
+- Validation schemas are built using Zod and `@hono/zod-openapi`
+- Schemas include both tRPC input validation and OpenAPI specification metadata
+- Uses `drizzle-zod` to generate schemas from database tables
+- Example: `ticketListRequestQuery` with OpenAPI descriptions and examples
+
+**2. Route Integration** (`apps/api/src/routes/`)
+- OpenAPI routes use `createRoute()` from `@hono/zod-openapi`
+- Routes reference validator schemas for request/response definitions
+- Routes are registered with the main OpenAPI Hono instance
+
+**3. Document Export** (`apps/api/src/lib/docs.ts`)
+- Exports the complete OpenAPI 3.1 document using `openapi.getOpenAPI31Document()`
+- Document is typed as `OpenAPIV3_1.Document` for type safety
+
+**4. Documentation Generation** (`apps/docs/`)
+- Script at `apps/docs/scripts/generate-docs.ts` imports the OpenAPI document
+- Saves the document as `openapi.json` in the docs app
+- Uses `fumadocs-openapi` to generate MDX files for each API operation
+- Generated files are placed in `content/docs/api/` with proper metadata
+- Fumadocs renders these as interactive API documentation
+
+**Commands:**
+- `pnpm --filter docs generate:docs` - Generate API documentation from OpenAPI spec
+
 ## Development Notes
 
 ### Important Context for AI Assistants
