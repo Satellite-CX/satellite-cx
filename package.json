@@ -12,9 +12,11 @@
     "db:down": "docker compose -f docker-compose.dev.yml down",
     "db:reset": "pnpm db:down && pnpm db:up && sleep 3 && pnpm db:push",
     "db:push": "pnpm --filter @repo/db push",
-    "kill": "bash -c 'lsof -ti:$1 | xargs -r kill -9' --"
+    "kill": "bash -c 'lsof -ti:$1 | xargs -r kill -9' --",
+    "gen:docs": "pnpm --filter=docs... generate:docs"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.23",
     "prettier": "^3.6.2",
     "turbo": "^2.5.6",
     "typescript": "5.9.2"

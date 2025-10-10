@@ -10,8 +10,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     networks:
-      - scx-network
+      - scx_network
 
 networks:
-  scx-network:
+  scx_network:
     driver: bridge

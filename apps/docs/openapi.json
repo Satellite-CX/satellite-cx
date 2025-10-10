@@ -1,0 +1,154 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "My API"
+  },
+  "components": {
+    "schemas": {},
+    "parameters": {}
+  },
+  "paths": {
+    "/tickets": {
+      "get": {
+        "title": "List Tickets",
+        "summary": "Get all tickets",
+        "operationId": "listTickets",
+        "tags": [
+          "tickets"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "example": 10,
+              "description": "Limit the number of tickets returned"
+            },
+            "required": false,
+            "description": "Limit the number of tickets returned",
+            "name": "limit",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "example": 10,
+              "description": "Skip the first N tickets"
+            },
+            "required": false,
+            "description": "Skip the first N tickets",
+            "name": "offset",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "orderBy",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "with",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieve the tickets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "organizationId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "priority": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "customerId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "assigneeId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "closedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "format": "date"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "organizationId",
+                      "subject",
+                      "description",
+                      "status",
+                      "priority",
+                      "customerId",
+                      "assigneeId",
+                      "createdAt",
+                      "updatedAt",
+                      "closedAt"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}

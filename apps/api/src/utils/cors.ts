@@ -1,7 +1,6 @@
 import { cors } from "hono/cors";
-import { env } from "@repo/validators";
 
-const corsOrigins = env.CORS_ORIGINS?.split(",") || [];
+const corsOrigins = process.env.CORS_ORIGINS?.split(",") || [];
 
 export const corsMiddleware = cors({
   origin: corsOrigins,

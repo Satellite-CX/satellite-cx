@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@types/bun':
+        specifier: ^1.2.23
+        version: 1.2.23(@types/react@19.2.0)
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
@@ -60,12 +63,18 @@ importers:
       '@types/bun':
         specifier: latest
         version: 1.2.23(@types/react@19.2.0)
+      openapi-types:
+        specifier: ^12.1.3
+        version: 12.1.3
       typescript:
         specifier: 5.9.2
         version: 5.9.2
 
   apps/docs:
     dependencies:
+      api:
+        specifier: workspace:*
+        version: link:../api
       fumadocs-core:
         specifier: 15.8.3
         version: 15.8.3(@tanstack/react-router@1.132.33(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@types/react@19.2.0)(lucide-react@0.544.0(react@19.2.0))(next@15.5.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -112,6 +121,12 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.0
         version: 19.2.0(@types/react@19.2.0)
+      dotenv:
+        specifier: ^17.2.2
+        version: 17.2.2
+      dotenv-expand:
+        specifier: ^12.0.3
+        version: 12.0.3
       eslint:
         specifier: ^9
         version: 9.34.0(jiti@2.6.1)
@@ -281,6 +296,9 @@ importers:
       '@repo/db':
         specifier: workspace:*
         version: link:../db
+      drizzle-zod:
+        specifier: ^0.8.3
+        version: 0.8.3(drizzle-orm@0.44.5(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(bun-types@1.2.23(@types/react@19.2.0))(kysely@0.28.7)(postgres@3.4.7))(zod@4.1.11)
       zod:
         specifier: ^4.1.11
         version: 4.1.11
@@ -290,7 +308,7 @@ importers:
         version: link:../../tooling/eslint-config
       '@types/node':
         specifier: latest
-        version: 24.7.0
+        version: 24.7.1
 
   tooling/eslint-config:
     dependencies:
@@ -1964,8 +1982,8 @@ packages:
   '@types/node@24.6.2':
     resolution: {integrity: sha512-d2L25Y4j+W3ZlNAeMKcy7yDsK425ibcAOO2t7aPTz6gNMH0z2GThtwENCDc0d/Pw9wgyRqE5Px1wkV7naz8ang==}
 
-  '@types/node@24.7.0':
-    resolution: {integrity: sha512-IbKooQVqUBrlzWTi79E8Fw78l8k1RNtlDDNWsFZs7XonuQSJ8oNYfEeclhprUldXISRMLzBpILuKgPlIxm+/Yw==}
+  '@types/node@24.7.1':
+    resolution: {integrity: sha512-CmyhGZanP88uuC5GpWU9q+fI61j2SkhO3UGMUdfYRE6Bcy0ccyzn1Rqj9YAB/ZY4kOXmNf0ocah5GtphmLMP6Q==}
 
   '@types/pg@8.15.5':
     resolution: {integrity: sha512-LF7lF6zWEKxuT3/OR8wAZGzkg4ENGXFNyiV/JeOt9z5B+0ZVwbql9McqX5c/WStFq1GaGso7H1AzP/qSzmlCKQ==}
@@ -2732,6 +2750,12 @@ packages:
     peerDependenciesMeta:
       drizzle-orm:
         optional: true
+
+  drizzle-zod@0.8.3:
+    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.0 || ^4.0.0
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -6111,7 +6135,7 @@ snapshots:
     dependencies:
       undici-types: 7.13.0
 
-  '@types/node@24.7.0':
+  '@types/node@24.7.1':
     dependencies:
       undici-types: 7.14.0
 
@@ -6696,7 +6720,7 @@ snapshots:
 
   bun-types@1.2.23(@types/react@19.2.0):
     dependencies:
-      '@types/node': 24.7.0
+      '@types/node': 24.7.1
       '@types/react': 19.2.0
 
   call-bind-apply-helpers@1.0.2:
@@ -6892,6 +6916,11 @@ snapshots:
       pure-rand: 6.1.0
     optionalDependencies:
       drizzle-orm: 0.44.5(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(bun-types@1.2.23(@types/react@19.2.0))(kysely@0.28.7)(postgres@3.4.7)
+
+  drizzle-zod@0.8.3(drizzle-orm@0.44.5(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(bun-types@1.2.23(@types/react@19.2.0))(kysely@0.28.7)(postgres@3.4.7))(zod@4.1.11):
+    dependencies:
+      drizzle-orm: 0.44.5(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(bun-types@1.2.23(@types/react@19.2.0))(kysely@0.28.7)(postgres@3.4.7)
+      zod: 4.1.11
 
   dunder-proto@1.0.1:
     dependencies:

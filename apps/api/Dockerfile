@@ -47,9 +47,5 @@ USER hono
 
 COPY --from=transpiler /app/apps/api/build/index.js .
 
-ENV PORT=80
-  
-EXPOSE 80
-
 ENTRYPOINT ["bun", "run", "index.js"]
 

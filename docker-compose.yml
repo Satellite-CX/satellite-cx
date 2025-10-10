@@ -1,19 +1,30 @@
 services:
-  mailserver:
+  api:
+    container_name: api
     build:
       context: .
-      dockerfile: apps/mailserver/Dockerfile
-    container_name: mailserver
-    ports:
-      - "25:25"
-      - "587:587"
-    hostname: ${MAILSERVER_HOSTNAME}
-    restart: unless-stopped
+      dockerfile: apps/api/Dockerfile
+    restart: always
     env_file:
       - .env
     networks:
-      - scx-network
+      - scx_network
+    ports:
+      - 8000:${API_PORT}
+
+  docs:
+    container_name: docs
+    build:
+      context: .
+      dockerfile: ./apps/docs/Dockerfile
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - 3000:80
+    networks:
+      - scx_network
 
 networks:
-  scx-network:
+  scx_network:
     driver: bridge

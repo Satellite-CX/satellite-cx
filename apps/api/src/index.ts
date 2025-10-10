@@ -1,7 +1,6 @@
 import { trpcServer } from "@hono/trpc-server";
 import { auth } from "@repo/db/auth";
 import { appRouter, createTRPCContext } from "@repo/trpc";
-import { env } from "@repo/validators";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { openapi } from "./routes";
@@ -46,7 +45,7 @@ app.notFound((c) => {
 });
 
 export default {
-  port: env.API_PORT,
+  port: parseInt(process.env.API_PORT!),
   fetch: app.fetch,
 };
 
