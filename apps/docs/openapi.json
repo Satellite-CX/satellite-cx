@@ -28,7 +28,7 @@
           "tickets"
         ],
         "title": "List Tickets",
-        "summary": "Get many tickets",
+        "summary": "List tickets",
         "operationId": "listTickets",
         "x-codeSamples": [
           {
@@ -503,7 +503,7 @@
     "/statuses": {
       "get": {
         "title": "List Statuses",
-        "summary": "Get many statuses",
+        "summary": "List statuses",
         "operationId": "listStatuses",
         "tags": [
           "statuses"

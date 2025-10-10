@@ -5,7 +5,7 @@ import { Status } from "@repo/validators";
 export const statusListRoute = createRoute({
   method: "get",
   title: "List Statuses",
-  summary: "Get many statuses",
+  summary: "List statuses",
   operationId: "listStatuses",
   path: "/",
   tags: ["statuses"],

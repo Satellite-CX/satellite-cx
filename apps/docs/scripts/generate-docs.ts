@@ -6,7 +6,7 @@ Bun.write("openapi.json", JSON.stringify(openapiDocument, null, 2));
 
 void generateFiles({
   input: openapi,
-  output: "./content/docs/api",
+  output: "./content/docs/api/endpoints",
   per: "operation",
   groupBy: "tag",
   includeDescription: true,

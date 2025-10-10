@@ -22,7 +22,7 @@ export const ticketListRoute = createRoute({
   ...sharedConfig,
   method: "get",
   title: "List Tickets",
-  summary: "Get many tickets",
+  summary: "List tickets",
   operationId: "listTickets",
   path: "/",
   "x-codeSamples": [
@@ -73,7 +73,7 @@ export const ticketCreateRoute = createRoute({
   ...sharedConfig,
   method: "post",
   title: "Create Ticket",
-  summary: "Create a new ticket",
+  summary: "Create a ticket",
   operationId: "createTicket",
   path: "/",
   request: {
