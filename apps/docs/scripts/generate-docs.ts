@@ -8,7 +8,6 @@ void generateFiles({
   input: openapi,
   output: "./content/docs/api",
   per: "operation",
-  groupBy: "route",
-  // Using cleaned descriptions that won't break MDX syntax
+  groupBy: "tag",
   includeDescription: true,
 });

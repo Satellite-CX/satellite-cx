@@ -18,6 +18,19 @@ app.use(
 
 app.use("*", corsMiddleware);
 
+// Global error handler for tRPC errors
+app.onError((err, c) => {
+  if (err && typeof err === 'object' && 'code' in err) {
+    const error = err as any;
+    if (error.code === "NOT_FOUND") {
+      return c.json({ error: error.message }, 404);
+    } else if (error.code === "UNAUTHORIZED") {
+      return c.json({ error: error.message }, 401);
+    }
+  }
+  return c.json({ error: "Internal Server Error" }, 500);
+});
+
 app.on(["POST", "GET"], "/auth/*", (c) => {
   return auth.handler(c.req.raw);
 });

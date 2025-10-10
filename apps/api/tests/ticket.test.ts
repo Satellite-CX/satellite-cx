@@ -100,4 +100,92 @@ describe("Tickets", () => {
       });
     });
   });
+
+  describe("GET /tickets/{id}", () => {
+    it("should return a single ticket by ID", async () => {
+      const listResponse = await app.request("/tickets", {
+        headers,
+      });
+      const tickets = await listResponse.json();
+      const firstTicket = tickets[0];
+
+      const response = await app.request(`/tickets/${firstTicket.id}`, {
+        headers,
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.id).toBe(firstTicket.id);
+      expect(data.subject).toBe(firstTicket.subject);
+      expect(data.description).toBe(firstTicket.description);
+      expect(data.organizationId).toBe(testData.organization.id);
+    });
+
+    it("should return 404 for non-existent ticket", async () => {
+      const response = await app.request("/tickets/non-existent-id", {
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should enforce organization isolation", async () => {
+      const response = await app.request("/tickets/other-org-ticket-id", {
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should require authentication", async () => {
+      const listResponse = await app.request("/tickets", {
+        headers,
+      });
+      const tickets = await listResponse.json();
+      const firstTicket = tickets[0];
+
+      const response = await app.request(`/tickets/${firstTicket.id}`);
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should return 404 for invalid route", async () => {
+      const response = await app.request("/tickets/", {
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should return ticket with correct schema structure", async () => {
+      const listResponse = await app.request("/tickets", {
+        headers,
+      });
+      const tickets = await listResponse.json();
+      const firstTicket = tickets[0];
+
+      const response = await app.request(`/tickets/${firstTicket.id}`, {
+        headers,
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      expect(data).toHaveProperty("id");
+      expect(data).toHaveProperty("organizationId");
+      expect(data).toHaveProperty("subject");
+      expect(data).toHaveProperty("description");
+      expect(data).toHaveProperty("status");
+      expect(data).toHaveProperty("priority");
+      expect(data).toHaveProperty("customerId");
+      expect(data).toHaveProperty("assigneeId");
+      expect(data).toHaveProperty("createdAt");
+      expect(data).toHaveProperty("updatedAt");
+      expect(data).toHaveProperty("closedAt");
+
+      expect(typeof data.id).toBe("string");
+      expect(typeof data.subject).toBe("string");
+      expect(typeof data.description).toBe("string");
+    });
+  });
 });

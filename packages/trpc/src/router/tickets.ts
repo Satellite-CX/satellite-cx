@@ -1,12 +1,24 @@
 import { tickets } from "@repo/db/schema";
-import { ticketListQueryTrpcInput, ticketListSchema } from "@repo/validators";
+import { ticketGetSchema, ticketListQueryTrpcInput } from "@repo/validators";
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 
 export const ticketsRouter = router({
+  get: protectedProcedure
+    .input(ticketGetSchema)
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+      const ticket = await ctx.db.rls((tx) =>
+        tx.query.tickets.findFirst({ where: eq(tickets.id, id) })
+      );
+      if (!ticket) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Ticket not found" });
+      }
+      return ticket;
+    }),
   list: protectedProcedure
     .input(ticketListQueryTrpcInput)
-    .output(ticketListSchema)
     .query(async ({ ctx, input }) => {
       const { limit, offset, orderBy, with: withParams } = input ?? {};
       return await ctx.db.rls((tx) =>
@@ -21,7 +33,6 @@ export const ticketsRouter = router({
             }
             const { field, direction } = orderBy;
             const orderFn = direction === "asc" ? asc : desc;
-
             return [orderFn(ticketsTable[field])];
           },
         })

@@ -12,10 +12,17 @@
     "/tickets": {
       "get": {
         "title": "List Tickets",
-        "summary": "Get all tickets",
+        "summary": "Get many tickets",
         "operationId": "listTickets",
         "tags": [
           "tickets"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "js",
+            "label": "JavaScript SDK",
+            "source": "console.log('hello world')"
+          }
         ],
         "parameters": [
           {
@@ -142,6 +149,110 @@
                       "closedAt"
                     ]
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{id}": {
+      "get": {
+        "title": "Get Ticket",
+        "summary": "Get a ticket",
+        "operationId": "getTicket",
+        "tags": [
+          "tickets"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "123",
+              "description": "The ID of the ticket"
+            },
+            "required": true,
+            "description": "The ID of the ticket",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieve a single ticket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "subject": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "priority": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "customerId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "assigneeId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "closedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organizationId",
+                    "subject",
+                    "description",
+                    "status",
+                    "priority",
+                    "customerId",
+                    "assigneeId",
+                    "createdAt",
+                    "updatedAt",
+                    "closedAt"
+                  ]
                 }
               }
             }

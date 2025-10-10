@@ -187,6 +187,198 @@ When working on this codebase, remember:
 - Do not use `switch` statements.
 - Avoid type assertion
 
+# Adding New API Endpoints
+
+## Step-by-Step Process
+
+When adding new endpoints (e.g., "add a new endpoint for updating tickets"), follow this exact process:
+
+### 1. Create Request/Response Schemas (`@repo/validators` package)
+
+**Location**: `packages/validators/src/{module}/`
+
+**Steps**:
+- Create schema files in organized directory structure (e.g., `tickets/`, `customers/`)
+- **Input schema**: Define request parameters/body validation using `@hono/zod-openapi`
+- **Output schema**: Use `createSelectSchema` from `schema-factory.ts` for DB-backed responses
+- **Export**: Add to module's `index.ts` file
+
+**Example structure**:
+```
+packages/validators/src/tickets/
+├── index.ts          # Export all schemas
+├── schema.ts         # Base ticket schema from DB
+├── get.ts           # GET /{id} path parameters
+├── list.ts          # GET / query parameters
+├── create.ts        # POST request body
+└── update.ts        # PUT/PATCH request body
+```
+
+**Key considerations**:
+- Use `z.coerce.number()` for query parameters that should be numbers
+- Use `z.string().transform()` for complex query parameters (JSON, CSV)
+- Include OpenAPI metadata with `.openapi()` for documentation
+- Ensure tRPC and OpenAPI schemas are compatible
+
+### 2. Create tRPC Route (`@repo/trpc` package)
+
+**Location**: `packages/trpc/src/router/{module}.ts`
+
+**Steps**:
+- Add procedure to router using `protectedProcedure` (or `publicProcedure` if public)
+- Use input schema for validation
+- Use output schema for response validation
+- Implement business logic with RLS-enabled database queries
+- Handle errors with appropriate `TRPCError` codes
+
+**Template**:
+```typescript
+export const {module}Router = router({
+  {action}: protectedProcedure
+    .input({inputSchema})
+    .output({outputSchema})
+    .{type}(async ({ ctx, input }) => {
+      // Business logic with RLS
+      const result = await ctx.db.rls((tx) =>
+        tx.query.{table}.{operation}({ /* query */ })
+      );
+
+      // Error handling
+      if (!result) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Resource not found" });
+      }
+
+      return result;
+    }),
+});
+```
+
+**Add comprehensive tests**:
+- **Location**: `packages/trpc/tests/{module}.test.ts`
+- Test successful operations
+- Test error cases (not found, validation failures)
+- Test organization isolation (RLS)
+- Test input/output validation
+- Test authentication requirements
+
+### 3. Create OpenAPI Route (`api` package)
+
+**Location**: `apps/api/src/routes/{module}.ts`
+
+**Steps**:
+- Create route using `createRoute()` from `@hono/zod-openapi`
+- Configure request validation (query, params, body)
+- Configure response schemas
+- Add OpenAPI metadata (title, summary, tags, examples)
+- Implement handler that delegates to tRPC caller
+
+**Template**:
+```typescript
+{module}.openapi(
+  createRoute({
+    method: "{method}",
+    title: "{Human Readable Title}",
+    summary: "{Short description}",
+    operationId: "{uniqueOperationId}",
+    path: "/{path}",
+    tags: ["{module}"],
+    request: {
+      query: {querySchema},      // For GET query params
+      params: {paramsSchema},    // For path parameters
+      body: {bodySchema},        // For POST/PUT bodies
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: {responseSchema},
+          },
+        },
+        description: "{Response description}",
+      },
+    },
+  }),
+  async (c) => {
+    const caller = createTrpcCaller({ headers: c.req.raw.headers });
+    const data = c.req.valid("query" | "params" | "json");
+    const result = await caller.{module}.{action}(data);
+    return c.json(result);
+  }
+);
+```
+
+**Add comprehensive tests**:
+- **Location**: `apps/api/tests/{module}.test.ts`
+- Test HTTP status codes (200, 404, 500, 401)
+- Test request/response body validation
+- Test authentication requirements
+- Test error handling
+- Test query parameter parsing
+- Test response schema structure
+
+### 4. Integration Steps
+
+**Update exports**:
+- Add new schemas to `packages/validators/src/index.ts`
+- Add new router to `packages/trpc/src/router/index.ts`
+- Add new routes to `apps/api/src/index.ts`
+
+**Update documentation**:
+- Run `pnpm --filter docs generate:docs` to update OpenAPI docs
+- Ensure OpenAPI schema is properly exported from `apps/api/src/lib/docs.ts`
+
+### 5. Quality Assurance
+
+**Run tests**:
+```bash
+pnpm --filter @repo/trpc test        # tRPC tests
+pnpm test --filter api               # API tests
+```
+
+**Type checking**:
+```bash
+pnpm --filter @repo/trpc typecheck   # tRPC package
+pnpm --filter api typecheck          # API package
+```
+
+**Integration testing**:
+- Test end-to-end via OpenAPI routes
+- Verify tRPC and API responses are identical
+- Test error scenarios across both layers
+
+### 6. Best Practices Checklist
+
+**Security**:
+- ✅ Use `protectedProcedure` for authenticated endpoints
+- ✅ Implement RLS with `ctx.db.rls()` for data isolation
+- ✅ Validate all inputs with Zod schemas
+- ✅ Use appropriate tRPC error codes
+
+**Performance**:
+- ✅ Use database indexes for query parameters
+- ✅ Implement pagination for list endpoints
+- ✅ Consider caching for frequently accessed data
+
+**Maintainability**:
+- ✅ Organize schemas by module/domain
+- ✅ Use consistent naming conventions
+- ✅ Add comprehensive test coverage
+- ✅ Include OpenAPI documentation metadata
+
+**Compatibility**:
+- ✅ Ensure tRPC and OpenAPI schemas match
+- ✅ Use `c.req.valid()` to get validated OpenAPI data
+- ✅ Handle query parameter coercion properly
+
+## Common Endpoint Types
+
+**GET /{resource}** - List resources with pagination/filtering
+**GET /{resource}/{id}** - Get single resource by ID
+**POST /{resource}** - Create new resource
+**PUT /{resource}/{id}** - Update entire resource
+**PATCH /{resource}/{id}** - Partial update of resource
+**DELETE /{resource}/{id}** - Delete resource
+
 # Important Instructions for AI Assistants
 
 - ALWAYS use the GitHub MCP server (mcp__github__*) when inspecting GitHub URLs instead of WebFetch or gh CLI.

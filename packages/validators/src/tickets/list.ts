@@ -1,7 +1,6 @@
-import { z } from "zod";
 import { z as zOpenApi } from "@hono/zod-openapi";
-import { createSchemaFactory } from "drizzle-zod";
-import { tickets } from "@repo/db/schema";
+import { z } from "zod";
+import { ticketSchema } from "./schema";
 
 const orderByFields = [
   "createdAt",
@@ -62,8 +61,4 @@ export const ticketListRequestQuery = zOpenApi.strictObject({
     .optional(),
 });
 
-const { createSelectSchema } = createSchemaFactory({ zodInstance: zOpenApi });
-
-const ticketSchema = createSelectSchema(tickets);
-
-export const ticketListSchema = zOpenApi.array(ticketSchema);
+export const ticketListSchema = ticketSchema.array();

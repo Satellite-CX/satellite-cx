@@ -215,4 +215,87 @@ describe("Tickets", () => {
       expect(Array.isArray(result)).toBe(true);
     });
   });
+
+  describe("Get ticket by ID", () => {
+    it("should return a single ticket by ID", async () => {
+      const allTickets = await caller.tickets.list();
+      const firstTicket = allTickets[0]!;
+
+      const result = await caller.tickets.get({ id: firstTicket.id });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(firstTicket.id);
+      expect(result.subject).toBe(firstTicket.subject);
+      expect(result.description).toBe(firstTicket.description);
+      expect(result.organizationId).toBe(firstTicket.organizationId);
+    });
+
+    it("should throw NOT_FOUND error for non-existent ticket", async () => {
+      expect(
+        caller.tickets.get({ id: "non-existent-ticket-id" })
+      ).rejects.toThrow("Ticket not found");
+    });
+
+    it("should enforce organization isolation", async () => {
+      const [otherOrg] = await adminDB
+        .insert(organizations)
+        .values({
+          id: "get-test-other-org",
+          name: "Get Test Other Org",
+          slug: "get-test-other-org",
+          createdAt: new Date(),
+        })
+        .returning();
+
+      const [otherOrgTicket] = await adminDB
+        .insert(tickets)
+        .values({
+          id: "other-org-get-ticket",
+          organizationId: otherOrg!.id,
+          subject: "Ticket from other org for get test",
+          description: "This should not be accessible",
+          createdAt: new Date(),
+        })
+        .returning();
+
+      expect(
+        caller.tickets.get({ id: otherOrgTicket!.id })
+      ).rejects.toThrow("Ticket not found");
+    });
+
+    it("should validate input parameter", async () => {
+      expect(
+        // @ts-expect-error - missing required id parameter
+        caller.tickets.get({})
+      ).rejects.toThrow();
+
+      expect(
+        // @ts-expect-error - id should be string
+        caller.tickets.get({ id: 123 })
+      ).rejects.toThrow();
+    });
+
+    it("should return ticket with correct schema structure", async () => {
+      const allTickets = await caller.tickets.list();
+      const firstTicket = allTickets[0]!;
+
+      const result = await caller.tickets.get({ id: firstTicket.id });
+
+      expect(result).toHaveProperty("id");
+      expect(result).toHaveProperty("organizationId");
+      expect(result).toHaveProperty("subject");
+      expect(result).toHaveProperty("description");
+      expect(result).toHaveProperty("status");
+      expect(result).toHaveProperty("priority");
+      expect(result).toHaveProperty("customerId");
+      expect(result).toHaveProperty("assigneeId");
+      expect(result).toHaveProperty("createdAt");
+      expect(result).toHaveProperty("updatedAt");
+      expect(result).toHaveProperty("closedAt");
+
+      expect(typeof result.id).toBe("string");
+      expect(typeof result.subject).toBe("string");
+      expect(typeof result.description).toBe("string");
+    });
+  });
 });
