@@ -1,16 +1,40 @@
 import { statuses } from "@repo/db/schema";
-import { StatusListQuery, Status, StatusCreateRequest } from "@repo/validators";
+import {
+  StatusListQuery,
+  Status,
+  StatusCreateRequest,
+  StatusUpdateInput,
+  StatusGetRequest,
+} from "@repo/validators";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 
 export const statusesRouter = router({
+  get: protectedProcedure
+    .input(StatusGetRequest)
+    .output(Status)
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+      const { activeOrganizationId } = ctx.session;
+      const result = await ctx.db.rls((tx) =>
+        tx.query.statuses.findFirst({
+          where: and(
+            eq(statuses.id, id),
+            eq(statuses.organizationId, activeOrganizationId)
+          ),
+        })
+      );
+      if (!result) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Status not found" });
+      }
+      return result;
+    }),
   create: protectedProcedure
     .input(StatusCreateRequest)
     .output(Status)
     .mutation(async ({ ctx, input }) => {
       const { activeOrganizationId } = ctx.session;
-
       const result = await ctx.db.rls((tx) =>
         tx
           .insert(statuses)
@@ -41,5 +65,23 @@ export const statusesRouter = router({
           orderBy: (statusesTable, { asc }) => [asc(statusesTable.name)],
         })
       );
+    }),
+  update: protectedProcedure
+    .input(StatusUpdateInput)
+    .output(Status)
+    .mutation(async ({ ctx, input }) => {
+      const { id, values } = input;
+      const { activeOrganizationId } = ctx.session;
+      const result = await ctx.db.rls((tx) =>
+        tx
+          .update(statuses)
+          .set({ ...values, organizationId: activeOrganizationId })
+          .where(eq(statuses.id, id))
+          .returning()
+      );
+      if (!result || result.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Status not found" });
+      }
+      return result[0]!;
     }),
 });

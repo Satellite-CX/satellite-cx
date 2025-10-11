@@ -349,4 +349,403 @@ describe("Statuses", () => {
       expect(data.organizationId).toBe(testData.organization.id);
     });
   });
+
+  describe("GET /statuses/{id}", () => {
+    it("should return a status by ID", async () => {
+      // First get the list to find a valid status ID
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const firstStatus = statuses[0];
+
+      const response = await app.request(`/statuses/${firstStatus.id}`, {
+        headers,
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      expect(data.id).toBe(firstStatus.id);
+      expect(data.name).toBe(firstStatus.name);
+      expect(data.organizationId).toBe(testData.organization.id);
+      expect(typeof data.createdAt).toBe("string");
+      expect(typeof data.updatedAt).toBe("string");
+    });
+
+    it("should return 404 for non-existent status", async () => {
+      const response = await app.request("/statuses/non-existent-status", {
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should require authentication", async () => {
+      const response = await app.request("/statuses/status-open");
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should enforce organization isolation", async () => {
+      // Try to access a status from another organization
+      const response = await app.request("/statuses/other-org-status-1", {
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should return JSON content type", async () => {
+      const response = await app.request("/statuses/status-open", {
+        headers,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("content-type")).toContain("application/json");
+    });
+
+    it("should return status with correct schema structure", async () => {
+      // Get a valid status ID first
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const testStatus = statuses[1] || statuses[0]; // Use second status if available
+
+      const response = await app.request(`/statuses/${testStatus.id}`, {
+        headers,
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      expect(data).toHaveProperty("id");
+      expect(data).toHaveProperty("organizationId");
+      expect(data).toHaveProperty("name");
+      expect(data).toHaveProperty("icon");
+      expect(data).toHaveProperty("color");
+      expect(data).toHaveProperty("createdAt");
+      expect(data).toHaveProperty("updatedAt");
+
+      expect(typeof data.id).toBe("string");
+      expect(typeof data.organizationId).toBe("string");
+      expect(typeof data.name).toBe("string");
+      expect(data.organizationId).toBe(testData.organization.id);
+    });
+  });
+
+  describe("PATCH /statuses/{id}", () => {
+    it("should update a status with all fields", async () => {
+      // Get a status to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[0];
+
+      const updateData = {
+        name: "Updated Status",
+        icon: "🔄",
+        color: "#ff6b6b",
+      };
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      expect(data.id).toBe(statusToUpdate.id);
+      expect(data.name).toBe(updateData.name);
+      expect(data.icon).toBe(updateData.icon);
+      expect(data.color).toBe(updateData.color);
+      expect(data.organizationId).toBe(testData.organization.id);
+      expect(typeof data.createdAt).toBe("string");
+      expect(typeof data.updatedAt).toBe("string");
+    });
+
+    it("should update a status with partial fields", async () => {
+      // Get a different status to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[1] || statuses[0];
+      const originalIcon = statusToUpdate.icon;
+      const originalColor = statusToUpdate.color;
+
+      const updateData = {
+        name: "Partially Updated Status",
+      };
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      expect(data.id).toBe(statusToUpdate.id);
+      expect(data.name).toBe(updateData.name);
+      expect(data.icon).toBe(originalIcon); // Should remain unchanged
+      expect(data.color).toBe(originalColor); // Should remain unchanged
+      expect(data.organizationId).toBe(testData.organization.id);
+    });
+
+    it("should update only icon", async () => {
+      // Get another status to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[2] || statuses[0];
+      const originalName = statusToUpdate.name;
+      const originalColor = statusToUpdate.color;
+
+      const updateData = {
+        icon: "🎯",
+      };
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      expect(data.id).toBe(statusToUpdate.id);
+      expect(data.name).toBe(originalName); // Should remain unchanged
+      expect(data.icon).toBe(updateData.icon);
+      expect(data.color).toBe(originalColor); // Should remain unchanged
+    });
+
+    it("should update only color", async () => {
+      // Get the last status to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[3] || statuses[0];
+      const originalName = statusToUpdate.name;
+      const originalIcon = statusToUpdate.icon;
+
+      const updateData = {
+        color: "#9333ea",
+      };
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      expect(data.id).toBe(statusToUpdate.id);
+      expect(data.name).toBe(originalName); // Should remain unchanged
+      expect(data.icon).toBe(originalIcon); // Should remain unchanged
+      expect(data.color).toBe(updateData.color);
+    });
+
+    it("should return 404 for non-existent status", async () => {
+      const updateData = {
+        name: "Updated Status",
+      };
+
+      const response = await app.request("/statuses/non-existent-status", {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should require authentication", async () => {
+      const updateData = {
+        name: "Updated Status",
+      };
+
+      const response = await app.request("/statuses/status-open", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should enforce organization isolation", async () => {
+      const updateData = {
+        name: "Hacked Status",
+      };
+
+      // Try to update a status from another organization
+      const response = await app.request("/statuses/other-org-status-1", {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should reject invalid JSON", async () => {
+      // Get a status to try to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[0];
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: "invalid json",
+      });
+
+      expect(response.status).toBe(500); // Hono returns 500 for invalid JSON
+    });
+
+    it("should accept empty body for partial updates", async () => {
+      // Get a status to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[0];
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+
+      // Empty body should be valid for partial updates, no changes should occur
+      expect(data.id).toBe(statusToUpdate.id);
+      expect(data.organizationId).toBe(testData.organization.id);
+    });
+
+    it("should reject invalid name (too long)", async () => {
+      // Get a status to try to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[0];
+
+      const updateData = {
+        name: "a".repeat(101), // Exceeds max length of 100
+      };
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(400);
+    });
+
+    it("should reject invalid name (empty string)", async () => {
+      // Get a status to try to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[0];
+
+      const updateData = {
+        name: "",
+      };
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(400);
+    });
+
+    it("should return JSON content type", async () => {
+      // Get a status to update
+      const listResponse = await app.request("/statuses", {
+        headers,
+      });
+      expect(listResponse.status).toBe(200);
+      const statuses = await listResponse.json();
+      const statusToUpdate = statuses[0];
+
+      const updateData = {
+        name: "Content Type Test",
+      };
+
+      const response = await app.request(`/statuses/${statusToUpdate.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("content-type")).toContain("application/json");
+    });
+  });
 });

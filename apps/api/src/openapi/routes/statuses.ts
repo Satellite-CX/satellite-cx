@@ -2,6 +2,8 @@ import { createRoute } from "@hono/zod-openapi";
 import {
   StatusListRequest,
   StatusCreateRequest,
+  StatusGetRequest,
+  StatusUpdateInput,
   Status,
 } from "@repo/validators";
 
@@ -43,7 +45,7 @@ export const statusCreateRoute = createRoute({
   ...sharedConfig,
   method: "post",
   title: "Create Status",
-  summary: "Create a new status",
+  summary: "Create a status",
   operationId: "createStatus",
   path: "/",
   request: {
@@ -69,6 +71,75 @@ export const statusCreateRoute = createRoute({
     },
     401: {
       description: "Unauthorized",
+    },
+    500: {
+      description: "Internal Server Error",
+    },
+  },
+});
+
+export const statusGetRoute = createRoute({
+  ...sharedConfig,
+  method: "get",
+  title: "Get Status",
+  summary: "Get a status by ID",
+  operationId: "getStatus",
+  path: "/{id}",
+  request: {
+    params: StatusGetRequest,
+  },
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: Status,
+        },
+      },
+      description: "Status retrieved successfully",
+    },
+    401: {
+      description: "Unauthorized",
+    },
+    404: {
+      description: "Status not found",
+    },
+  },
+});
+
+export const statusUpdateRoute = createRoute({
+  ...sharedConfig,
+  method: "patch",
+  title: "Update Status",
+  summary: "Update a status",
+  operationId: "updateStatus",
+  path: "/{id}",
+  request: {
+    params: StatusGetRequest,
+    body: {
+      content: {
+        "application/json": {
+          schema: StatusUpdateInput.shape.values,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: Status,
+        },
+      },
+      description: "Status updated successfully",
+    },
+    400: {
+      description: "Bad Request - Invalid input",
+    },
+    401: {
+      description: "Unauthorized",
+    },
+    404: {
+      description: "Status not found",
     },
     500: {
       description: "Internal Server Error",

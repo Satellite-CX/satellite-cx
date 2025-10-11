@@ -502,12 +502,17 @@
     },
     "/statuses": {
       "post": {
-        "title": "Create Status",
-        "summary": "Create a new status",
-        "operationId": "createStatus",
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
         "tags": [
           "statuses"
         ],
+        "title": "Create Status",
+        "summary": "Create a status",
+        "operationId": "createStatus",
         "requestBody": {
           "content": {
             "application/json": {
@@ -605,12 +610,17 @@
         }
       },
       "get": {
-        "title": "List Statuses",
-        "summary": "List statuses",
-        "operationId": "listStatuses",
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
         "tags": [
           "statuses"
         ],
+        "title": "List Statuses",
+        "summary": "List statuses",
+        "operationId": "listStatuses",
         "parameters": [
           {
             "schema": {
@@ -701,6 +711,216 @@
           },
           "401": {
             "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/statuses/{id}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "statuses"
+        ],
+        "title": "Get Status",
+        "summary": "Get a status by ID",
+        "operationId": "getStatus",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "123",
+              "description": "The ID of the status"
+            },
+            "required": true,
+            "description": "The ID of the status",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "icon": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "color": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organizationId",
+                    "name",
+                    "icon",
+                    "color",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Status not found"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "statuses"
+        ],
+        "title": "Update Status",
+        "summary": "Update a status",
+        "operationId": "updateStatus",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "123",
+              "description": "The ID of the status"
+            },
+            "required": true,
+            "description": "The ID of the status",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "example": "Open",
+                    "description": "The name of the status"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "example": "🔍",
+                    "description": "Icon for the status"
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "#3b82f6",
+                    "description": "Color for the status in hex format"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "icon": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "color": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organizationId",
+                    "name",
+                    "icon",
+                    "color",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Status not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

@@ -1,11 +1,18 @@
 import { adminDB } from "@repo/db/client";
-import { statuses, organizations } from "@repo/db/schema";
+import { organizations, statuses } from "@repo/db/schema";
 import {
+  generateTestData,
   resetDatabase,
   seedDatabase,
-  generateTestData,
 } from "@repo/db/test-utils";
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "bun:test";
 import { createTrpcCaller } from "../src";
 
 describe("Statuses", () => {
@@ -59,7 +66,9 @@ describe("Statuses", () => {
       expect(result.length).toBe(4); // Should still be 4, not 5
 
       // Verify none of the returned statuses belong to the other org
-      const otherOrgStatuses = result.filter(s => s.organizationId === otherOrg!.id);
+      const otherOrgStatuses = result.filter(
+        (s) => s.organizationId === otherOrg!.id
+      );
       expect(otherOrgStatuses.length).toBe(0);
     });
 
@@ -87,9 +96,7 @@ describe("Statuses", () => {
     });
 
     it("should reject limit of 0", async () => {
-      expect(
-        caller.statuses.list({ limit: 0 })
-      ).rejects.toThrow();
+      expect(caller.statuses.list({ limit: 0 })).rejects.toThrow();
     });
   });
 
@@ -121,27 +128,21 @@ describe("Statuses", () => {
     });
 
     it("should validate limit parameter", async () => {
-      expect(
-        caller.statuses.list({ limit: "invalid" as any })
-      ).rejects.toThrow();
+      // @ts-expect-error - Invalid limit
+      expect(caller.statuses.list({ limit: "invalid" })).rejects.toThrow();
     });
 
     it("should validate offset parameter", async () => {
-      expect(
-        caller.statuses.list({ offset: "invalid" as any })
-      ).rejects.toThrow();
+      // @ts-expect-error - Invalid offset
+      expect(caller.statuses.list({ offset: "invalid" })).rejects.toThrow();
     });
 
     it("should handle negative limit", async () => {
-      expect(
-        caller.statuses.list({ limit: -1 })
-      ).rejects.toThrow();
+      expect(caller.statuses.list({ limit: -1 })).rejects.toThrow();
     });
 
     it("should handle negative offset", async () => {
-      expect(
-        caller.statuses.list({ offset: -1 })
-      ).rejects.toThrow();
+      expect(caller.statuses.list({ offset: -1 })).rejects.toThrow();
     });
   });
 
@@ -168,11 +169,11 @@ describe("Statuses", () => {
       const result = await caller.statuses.list();
 
       // Check that we have the expected status names from seed data
-      const statusNames = result.map(s => s.name).sort();
+      const statusNames = result.map((s) => s.name).sort();
       expect(statusNames).toEqual(["Closed", "Open", "Pending", "Resolved"]);
 
       // Check that each status has the expected properties
-      result.forEach(status => {
+      result.forEach((status) => {
         expect(status.id).toMatch(/^status-/);
         if (status.icon) {
           expect(["📋", "⏳", "✅", "🔒"]).toContain(status.icon);
@@ -222,7 +223,7 @@ describe("Statuses", () => {
       expect(result.length).toBe(4);
 
       // Verify all returned statuses belong to the test organization
-      result.forEach(status => {
+      result.forEach((status) => {
         expect(status.organizationId).toBe(testData.organization.id);
       });
     });
@@ -287,7 +288,7 @@ describe("Statuses", () => {
         const updatedList = await caller.statuses.list();
         expect(updatedList.length).toBe(initialCount + 1);
 
-        const newStatus = updatedList.find(s => s.name === statusData.name);
+        const newStatus = updatedList.find((s) => s.name === statusData.name);
         expect(newStatus).toBeDefined();
         expect(newStatus!.icon).toBe(statusData.icon);
       });
@@ -299,9 +300,7 @@ describe("Statuses", () => {
           name: "",
         };
 
-        expect(
-          caller.statuses.create(statusData)
-        ).rejects.toThrow();
+        expect(caller.statuses.create(statusData)).rejects.toThrow();
       });
 
       it("should reject name that's too long", async () => {
@@ -309,20 +308,17 @@ describe("Statuses", () => {
           name: "x".repeat(101), // 101 characters
         };
 
-        expect(
-          caller.statuses.create(statusData)
-        ).rejects.toThrow();
+        expect(caller.statuses.create(statusData)).rejects.toThrow();
       });
 
       it("should reject missing name", async () => {
         const statusData = {
           icon: "🔄",
           color: "#fbbf24",
-        } as any; // Missing name
+        };
 
-        expect(
-          caller.statuses.create(statusData)
-        ).rejects.toThrow();
+        // @ts-expect-error - Missing name
+        expect(caller.statuses.create(statusData)).rejects.toThrow();
       });
 
       it("should accept name at maximum length", async () => {
@@ -394,25 +390,14 @@ describe("Statuses", () => {
 
         // Check that the status doesn't exist in the other organization's context
         const otherOrgStatuses = await adminDB.query.statuses.findMany({
-          where: (statuses, { eq }) => eq(statuses.organizationId, otherOrg!.id),
+          where: (statuses, { eq }) =>
+            eq(statuses.organizationId, otherOrg!.id),
         });
 
-        const hasTestStatus = otherOrgStatuses.some(s => s.name === statusData.name);
+        const hasTestStatus = otherOrgStatuses.some(
+          (s) => s.name === statusData.name
+        );
         expect(hasTestStatus).toBe(false);
-      });
-    });
-
-    describe("Error handling", () => {
-      it("should handle database errors gracefully", async () => {
-        // This is a mock scenario - in real implementation,
-        // we might test database connection issues
-        const statusData = {
-          name: "Error Test Status",
-        };
-
-        // For now, just verify that valid input doesn't throw
-        const result = await caller.statuses.create(statusData);
-        expect(result).toBeDefined();
       });
     });
 
@@ -441,6 +426,66 @@ describe("Statuses", () => {
         expect(result.createdAt).toBeInstanceOf(Date);
         expect(result.updatedAt).toBeInstanceOf(Date);
       });
+    });
+  });
+
+  describe("Get Status", () => {
+    let statusId: string;
+
+    beforeEach(async () => {
+      const result = await caller.statuses.create({
+        name: "Get Status Test",
+        icon: "📋",
+        color: "#e11d48",
+      });
+      statusId = result.id;
+    });
+
+    it("should get a status by id", async () => {
+      const statusData = {
+        id: statusId,
+      };
+      const result = await caller.statuses.get({ id: statusData.id });
+      expect(result).toBeDefined();
+      expect(result.id).toBe(statusId);
+      expect(result.name).toBe("Get Status Test");
+      expect(result.icon).toBe("📋");
+      expect(result.color).toBe("#e11d48");
+    });
+  });
+
+  describe("Update Status", () => {
+    let statusId: string;
+
+    beforeEach(async () => {
+      const result = await caller.statuses.create({
+        name: "Update Status Test",
+        icon: "📋",
+        color: "#e11d48",
+      });
+      statusId = result.id;
+    });
+
+    it("should update a status with all fields", async () => {
+      const statusData = {
+        id: statusId,
+        values: {
+          name: "Updated Status",
+          icon: "�",
+          color: "#3b82f6",
+        },
+      };
+      const result = await caller.statuses.update(statusData);
+      expect(result).toBeDefined();
+      expect(result.name).toBe(statusData.values.name);
+      expect(result.icon).toBe(statusData.values.icon);
+      expect(result.color).toBe(statusData.values.color);
+
+      const updatedStatus = await caller.statuses.get({ id: statusData.id });
+      expect(updatedStatus).toBeDefined();
+      expect(updatedStatus.name).toBe(statusData.values.name);
+      expect(updatedStatus.icon).toBe(statusData.values.icon);
+      expect(updatedStatus.color).toBe(statusData.values.color);
     });
   });
 });
