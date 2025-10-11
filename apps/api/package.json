@@ -8,7 +8,7 @@
     "dev": "PORT=8000 bun run --env-file=../../.env --hot src/index.ts",
     "build": "bun build ./src/index.ts --outdir ./build --target bun",
     "start": "PORT=8000 bun run ./build/index.js",
-    "test": "bun --env-file=../../.env test --reporter=junit --reporter-outfile=./test-results.xml",
+    "test": "bun --env-file=../../.env test",
     "clean": "rm -rf .turbo node_modules",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."

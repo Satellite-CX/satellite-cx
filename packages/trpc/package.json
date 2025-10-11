@@ -11,7 +11,7 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "bun --env-file=../../.env test --reporter=junit --reporter-outfile=./test-results.xml"
+    "test": "bun --env-file=../../.env test"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.1.3",
