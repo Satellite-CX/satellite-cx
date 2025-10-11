@@ -2,11 +2,10 @@ import { statuses } from "@repo/db/schema";
 import {
   StatusListQuery,
   Status,
-  StatusCreateRequest,
+  StatusCreateInput,
   StatusUpdateInput,
-  StatusGetRequest,
-  StatusDeleteRequest,
-  StatusDeleteResponse,
+  StatusGetInput,
+  StatusDeleteOutput,
 } from "@repo/validators";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -14,7 +13,7 @@ import { protectedProcedure, router } from "../trpc";
 
 export const statusesRouter = router({
   get: protectedProcedure
-    .input(StatusGetRequest)
+    .input(StatusGetInput)
     .output(Status)
     .query(async ({ ctx, input }) => {
       const { id } = input;
@@ -33,7 +32,7 @@ export const statusesRouter = router({
       return result;
     }),
   create: protectedProcedure
-    .input(StatusCreateRequest)
+    .input(StatusCreateInput)
     .output(Status)
     .mutation(async ({ ctx, input }) => {
       const { activeOrganizationId } = ctx.session;
@@ -87,8 +86,8 @@ export const statusesRouter = router({
       return result[0]!;
     }),
   delete: protectedProcedure
-    .input(StatusDeleteRequest)
-    .output(StatusDeleteResponse)
+    .input(StatusGetInput)
+    .output(StatusDeleteOutput)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
       const { activeOrganizationId } = ctx.session;

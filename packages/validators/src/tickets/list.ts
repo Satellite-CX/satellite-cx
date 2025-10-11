@@ -23,7 +23,7 @@ export const TicketOrderBy = z.object({
   direction: z.enum(["asc", "desc"]),
 });
 
-export const TicketListQuery = z
+export const TicketListTrpcInput = zOpenApi
   .strictObject({
     limit,
     offset,
@@ -32,7 +32,7 @@ export const TicketListQuery = z
   })
   .optional();
 
-export const TicketListRequest = zOpenApi.strictObject({
+export const TicketListInput = zOpenApi.strictObject({
   limit: limitOpenApi.openapi({
     example: 10,
     description: "Limit the number of tickets returned",

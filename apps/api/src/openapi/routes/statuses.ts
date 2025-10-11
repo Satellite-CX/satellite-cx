@@ -1,11 +1,10 @@
 import { createRoute } from "@hono/zod-openapi";
 import {
-  StatusListRequest,
-  StatusCreateRequest,
-  StatusGetRequest,
+  StatusListInput,
+  StatusCreateInput,
+  StatusGetInput,
   StatusUpdateInput,
-  StatusDeleteRequest,
-  StatusDeleteResponse,
+  StatusDeleteOutput,
   Status,
 } from "@repo/validators";
 
@@ -26,7 +25,7 @@ export const statusListRoute = createRoute({
   operationId: "listStatuses",
   path: "/",
   request: {
-    query: StatusListRequest,
+    query: StatusListInput,
   },
   responses: {
     200: {
@@ -54,7 +53,7 @@ export const statusCreateRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: StatusCreateRequest,
+          schema: StatusCreateInput,
         },
       },
     },
@@ -88,7 +87,7 @@ export const statusGetRoute = createRoute({
   operationId: "getStatus",
   path: "/{id}",
   request: {
-    params: StatusGetRequest,
+    params: StatusGetInput,
   },
   responses: {
     200: {
@@ -116,7 +115,7 @@ export const statusUpdateRoute = createRoute({
   operationId: "updateStatus",
   path: "/{id}",
   request: {
-    params: StatusGetRequest,
+    params: StatusGetInput,
     body: {
       content: {
         "application/json": {
@@ -157,13 +156,13 @@ export const statusDeleteRoute = createRoute({
   operationId: "deleteStatus",
   path: "/{id}",
   request: {
-    params: StatusDeleteRequest,
+    params: StatusGetInput,
   },
   responses: {
     200: {
       content: {
         "application/json": {
-          schema: StatusDeleteResponse,
+          schema: StatusDeleteOutput,
         },
       },
       description: "Status deleted successfully",

@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export const TicketGet = z.object({
+export const TicketGetInput = z.object({
   id: z.string().openapi({
     param: {
       name: "id",

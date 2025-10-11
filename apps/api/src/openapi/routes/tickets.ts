@@ -1,12 +1,12 @@
 import { createRoute } from "@hono/zod-openapi";
 import {
   Ticket,
-  TicketCreate,
-  TicketDelete,
-  TicketDeleteResponse,
-  TicketGet,
+  TicketCreateInput,
+  TicketDeleteInput,
+  TicketDeleteOutput,
+  TicketGetInput,
   TicketList,
-  TicketListRequest,
+  TicketListInput,
 } from "@repo/validators";
 
 const sharedConfig = {
@@ -33,7 +33,7 @@ export const ticketListRoute = createRoute({
     },
   ],
   request: {
-    query: TicketListRequest,
+    query: TicketListInput,
   },
   responses: {
     200: {
@@ -55,7 +55,7 @@ export const ticketGetRoute = createRoute({
   operationId: "getTicket",
   path: "/{id}",
   request: {
-    params: TicketGet,
+    params: TicketGetInput,
   },
   responses: {
     200: {
@@ -80,7 +80,7 @@ export const ticketCreateRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: TicketCreate,
+          schema: TicketCreateInput,
         },
       },
       description: "Ticket data to create",
@@ -112,13 +112,13 @@ export const ticketDeleteRoute = createRoute({
   operationId: "deleteTicket",
   path: "/{id}",
   request: {
-    params: TicketDelete,
+    params: TicketDeleteInput,
   },
   responses: {
     200: {
       content: {
         "application/json": {
-          schema: TicketDeleteResponse,
+          schema: TicketDeleteOutput,
         },
       },
       description: "Ticket deleted successfully",

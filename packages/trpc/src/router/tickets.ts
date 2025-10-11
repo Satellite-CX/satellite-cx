@@ -1,10 +1,10 @@
 import { tickets } from "@repo/db/schema";
 import {
-  TicketCreate,
-  TicketDelete,
-  TicketGet,
-  TicketListQuery,
   Ticket,
+  TicketCreateInput,
+  TicketDeleteInput,
+  TicketGetInput,
+  TicketListTrpcInput,
 } from "@repo/validators";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -12,7 +12,7 @@ import { protectedProcedure, router } from "../trpc";
 
 export const ticketsRouter = router({
   create: protectedProcedure
-    .input(TicketCreate)
+    .input(TicketCreateInput)
     .output(Ticket)
     .mutation(async ({ ctx, input }) => {
       const { activeOrganizationId } = ctx.session;
@@ -32,18 +32,20 @@ export const ticketsRouter = router({
 
       return result[0]!;
     }),
-  get: protectedProcedure.input(TicketGet).query(async ({ ctx, input }) => {
-    const { id } = input;
-    const ticket = await ctx.db.rls((tx) =>
-      tx.query.tickets.findFirst({ where: eq(tickets.id, id) })
-    );
-    if (!ticket) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "Ticket not found" });
-    }
-    return ticket;
-  }),
+  get: protectedProcedure
+    .input(TicketGetInput)
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+      const ticket = await ctx.db.rls((tx) =>
+        tx.query.tickets.findFirst({ where: eq(tickets.id, id) })
+      );
+      if (!ticket) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Ticket not found" });
+      }
+      return ticket;
+    }),
   list: protectedProcedure
-    .input(TicketListQuery)
+    .input(TicketListTrpcInput)
     .query(async ({ ctx, input }) => {
       const { limit, offset, orderBy, with: withParams } = input ?? {};
       return await ctx.db.rls((tx) =>
@@ -64,7 +66,7 @@ export const ticketsRouter = router({
       );
     }),
   delete: protectedProcedure
-    .input(TicketDelete)
+    .input(TicketDeleteInput)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 

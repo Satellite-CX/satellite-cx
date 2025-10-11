@@ -7,3 +7,4 @@ const schemaFactory = createSchemaFactory({
 
 export const createSelectSchema = schemaFactory.createSelectSchema;
 export const createInsertSchema = schemaFactory.createInsertSchema;
+export const createUpdateSchema = schemaFactory.createUpdateSchema;

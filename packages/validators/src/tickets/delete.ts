@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export const TicketDelete = z.object({
+export const TicketDeleteInput = z.object({
   id: z.string().openapi({
     param: {
       name: "id",
@@ -11,7 +11,7 @@ export const TicketDelete = z.object({
   }),
 });
 
-export const TicketDeleteResponse = z.object({
+export const TicketDeleteOutput = z.object({
   success: z.boolean().openapi({
     example: true,
     description: "Whether the deletion was successful",
