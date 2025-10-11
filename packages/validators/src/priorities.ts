@@ -1,13 +1,10 @@
 import { priorities } from "@repo/db/schema";
-import { createInsertSchema } from "./schema-factory";
+import { createInsertSchema, createSelectSchema } from "./schema-factory";
 import { z as zOpenApi } from "@hono/zod-openapi";
+import { limit, limitOpenApi, offset, offsetOpenApi } from "./shared";
 
-export const PriorityGetInput = zOpenApi.object({
-  id: zOpenApi.string().openapi({
-    example: "123",
-    description: "The ID of the priority",
-  }),
-});
+export const Priority = createSelectSchema(priorities);
+export const PriorityList = Priority.array();
 
 export const PriorityCreateInput = createInsertSchema(priorities, {
   name: (name) =>
@@ -29,7 +26,39 @@ export const PriorityCreateInput = createInsertSchema(priorities, {
   organizationId: true,
 });
 
+export const PriorityGetInput = zOpenApi.object({
+  id: zOpenApi.string().openapi({
+    example: "123",
+    description: "The ID of the priority",
+  }),
+});
+
+export const PriorityListTrpcInput = zOpenApi
+  .object({
+    limit,
+    offset,
+  })
+  .optional();
+
+export const PriorityListInput = zOpenApi.object({
+  limit: limitOpenApi.openapi({
+    example: 20,
+    description: "Limit the number of priorities returned",
+  }),
+  offset: offsetOpenApi.openapi({
+    example: 0,
+    description: "Skip the first N priorities",
+  }),
+});
+
 export const PriorityUpdateInput = zOpenApi.object({
   id: PriorityGetInput.shape.id,
   values: PriorityCreateInput.partial(),
+});
+
+export const PriorityDeleteOutput = zOpenApi.object({
+  success: zOpenApi.boolean().openapi({
+    example: true,
+    description: "Whether the priority was successfully deleted",
+  }),
 });

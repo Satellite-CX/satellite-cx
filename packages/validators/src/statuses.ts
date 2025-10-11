@@ -32,7 +32,7 @@ export const StatusGetInput = zOpenApi.object({
   }),
 });
 
-export const StatusListQuery = zOpenApi
+export const StatusListTrpcInput = zOpenApi
   .object({
     limit,
     offset,

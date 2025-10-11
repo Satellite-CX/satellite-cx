@@ -1,44 +1,44 @@
-import { statuses } from "@repo/db/schema";
+import { priorities } from "@repo/db/schema";
 import {
-  StatusListTrpcInput,
-  Status,
-  StatusCreateInput,
-  StatusUpdateInput,
-  StatusGetInput,
-  StatusDeleteOutput,
+  PriorityListTrpcInput,
+  Priority,
+  PriorityCreateInput,
+  PriorityUpdateInput,
+  PriorityGetInput,
+  PriorityDeleteOutput,
 } from "@repo/validators";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 
-export const statusesRouter = router({
+export const prioritiesRouter = router({
   get: protectedProcedure
-    .input(StatusGetInput)
-    .output(Status)
+    .input(PriorityGetInput)
+    .output(Priority)
     .query(async ({ ctx, input }) => {
       const { id } = input;
       const { activeOrganizationId } = ctx.session;
       const result = await ctx.db.rls((tx) =>
-        tx.query.statuses.findFirst({
+        tx.query.priorities.findFirst({
           where: and(
-            eq(statuses.id, id),
-            eq(statuses.organizationId, activeOrganizationId)
+            eq(priorities.id, id),
+            eq(priorities.organizationId, activeOrganizationId)
           ),
         })
       );
       if (!result) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Status not found" });
+        throw new TRPCError({ code: "NOT_FOUND", message: "Priority not found" });
       }
       return result;
     }),
   create: protectedProcedure
-    .input(StatusCreateInput)
-    .output(Status)
+    .input(PriorityCreateInput)
+    .output(Priority)
     .mutation(async ({ ctx, input }) => {
       const { activeOrganizationId } = ctx.session;
       const result = await ctx.db.rls((tx) =>
         tx
-          .insert(statuses)
+          .insert(priorities)
           .values({ ...input, organizationId: activeOrganizationId })
           .returning()
       );
@@ -46,64 +46,64 @@ export const statusesRouter = router({
       if (!result || result.length === 0) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create status",
+          message: "Failed to create priority",
         });
       }
 
       return result[0]!;
     }),
   list: protectedProcedure
-    .input(StatusListTrpcInput)
-    .output(Status.array())
+    .input(PriorityListTrpcInput)
+    .output(Priority.array())
     .query(async ({ ctx, input }) => {
       const { limit, offset } = input ?? {};
       const { activeOrganizationId } = ctx.session;
       return await ctx.db.rls((tx) =>
-        tx.query.statuses.findMany({
-          where: eq(statuses.organizationId, activeOrganizationId),
+        tx.query.priorities.findMany({
+          where: eq(priorities.organizationId, activeOrganizationId),
           limit,
           offset,
-          orderBy: (statusesTable, { asc }) => [asc(statusesTable.name)],
+          orderBy: (prioritiesTable, { asc }) => [asc(prioritiesTable.name)],
         })
       );
     }),
   update: protectedProcedure
-    .input(StatusUpdateInput)
-    .output(Status)
+    .input(PriorityUpdateInput)
+    .output(Priority)
     .mutation(async ({ ctx, input }) => {
       const { id, values } = input;
       const { activeOrganizationId } = ctx.session;
       const result = await ctx.db.rls((tx) =>
         tx
-          .update(statuses)
+          .update(priorities)
           .set({ ...values, organizationId: activeOrganizationId })
-          .where(eq(statuses.id, id))
+          .where(eq(priorities.id, id))
           .returning()
       );
       if (!result || result.length === 0) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Status not found" });
+        throw new TRPCError({ code: "NOT_FOUND", message: "Priority not found" });
       }
       return result[0]!;
     }),
   delete: protectedProcedure
-    .input(StatusGetInput)
-    .output(StatusDeleteOutput)
+    .input(PriorityGetInput)
+    .output(PriorityDeleteOutput)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
       const { activeOrganizationId } = ctx.session;
       const result = await ctx.db.rls((tx) =>
         tx
-          .delete(statuses)
+          .delete(priorities)
           .where(
             and(
-              eq(statuses.id, id),
-              eq(statuses.organizationId, activeOrganizationId)
+              eq(priorities.id, id),
+              eq(priorities.organizationId, activeOrganizationId)
             )
           )
           .returning()
       );
       if (!result || result.length === 0) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Status not found" });
+        throw new TRPCError({ code: "NOT_FOUND", message: "Priority not found" });
       }
       return { success: true };
     }),

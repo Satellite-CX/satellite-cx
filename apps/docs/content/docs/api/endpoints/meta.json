@@ -1,4 +1,4 @@
 {
   "title": "Endpoints",
-  "pages": ["tickets", "statuses"]
+  "pages": ["tickets", "statuses", "priorities"]
 }
