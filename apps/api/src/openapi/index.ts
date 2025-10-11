@@ -3,6 +3,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { tickets } from "./tickets";
 import { statuses } from "./statuses";
 import { priorities } from "./priorities";
+import { customers } from "./customers";
 
 const openapi = new OpenAPIHono();
 
@@ -16,6 +17,7 @@ openapi.openAPIRegistry.registerComponent("securitySchemes", "ApiKey", {
 openapi.route("/tickets", tickets);
 openapi.route("/statuses", statuses);
 openapi.route("/priorities", priorities);
+openapi.route("/customers", customers);
 
 openapi.doc("/openapi", {
   openapi: "3.0.0",

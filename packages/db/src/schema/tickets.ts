@@ -14,11 +14,9 @@ export const tickets = pgTable("ticket", {
     onDelete: "cascade",
   }),
   priority: text("priority_id").references(() => priorities.id),
-  customerId: text("customer_id")
-    .references(() => customers.id, {
-      onDelete: "set null",
-    })
-    .notNull(),
+  customerId: text("customer_id").references(() => customers.id, {
+    onDelete: "set null",
+  }),
   assigneeId: text("assignee_id").references(() => users.id),
   createdAt,
   updatedAt,

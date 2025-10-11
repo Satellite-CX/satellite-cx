@@ -83,9 +83,15 @@ export async function seedDatabase(options?: TestData | SeedOptions) {
       count: customerCount,
       columns: {
         organizationId: f.default({ defaultValue: testData.organization.id }),
-        id: f.default({ defaultValue: "test-customer-1" }),
+        id: f.valuesFromArray({
+          values: Array.from({ length: customerCount }, (_, i) => `test-customer-${i + 1}`),
+          isUnique: true,
+        }),
         name: f.default({ defaultValue: "Test Customer" }),
-        email: f.default({ defaultValue: "customer@test.com" }),
+        email: f.valuesFromArray({
+          values: Array.from({ length: customerCount }, (_, i) => `customer${i + 1}@test.com`),
+          isUnique: true,
+        }),
         phone: f.default({ defaultValue: "123-456-7890" }),
       },
     },
