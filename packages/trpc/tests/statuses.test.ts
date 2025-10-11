@@ -488,4 +488,86 @@ describe("Statuses", () => {
       expect(updatedStatus.color).toBe(statusData.values.color);
     });
   });
+
+  describe("Delete Status", () => {
+    let statusId: string;
+
+    beforeEach(async () => {
+      const result = await caller.statuses.create({
+        name: "Delete Status Test",
+        icon: "🗑️",
+        color: "#ef4444",
+      });
+      statusId = result.id;
+    });
+
+    it("should delete a status by id", async () => {
+      const result = await caller.statuses.delete({ id: statusId });
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+
+      // Verify the status is no longer accessible
+      expect(caller.statuses.get({ id: statusId })).rejects.toThrow("Status not found");
+    });
+
+    it("should remove deleted status from list", async () => {
+      const initialList = await caller.statuses.list();
+      const initialCount = initialList.length;
+
+      await caller.statuses.delete({ id: statusId });
+
+      const updatedList = await caller.statuses.list();
+      expect(updatedList.length).toBe(initialCount - 1);
+
+      const deletedStatus = updatedList.find((s) => s.id === statusId);
+      expect(deletedStatus).toBeUndefined();
+    });
+
+    it("should throw error when deleting non-existent status", async () => {
+      expect(caller.statuses.delete({ id: "non-existent-id" })).rejects.toThrow("Status not found");
+    });
+
+    it("should only delete status from user's organization", async () => {
+      // Create another organization with a status
+      const [otherOrg] = await adminDB
+        .insert(organizations)
+        .values({
+          id: "delete-isolation-test-org",
+          name: "Delete Isolation Test Org",
+          slug: "delete-isolation-test-org",
+          createdAt: new Date(),
+        })
+        .returning();
+
+      const [otherOrgStatus] = await adminDB
+        .insert(statuses)
+        .values({
+          id: "other-org-status-delete",
+          organizationId: otherOrg!.id,
+          name: "Other Org Status",
+          icon: "🔹",
+          color: "purple",
+          createdAt: new Date(),
+        })
+        .returning();
+
+      // Try to delete the other organization's status - should fail
+      expect(caller.statuses.delete({ id: otherOrgStatus!.id })).rejects.toThrow("Status not found");
+
+      // Verify the other org's status still exists
+      const otherOrgStatuses = await adminDB.query.statuses.findMany({
+        where: (statuses, { eq }) => eq(statuses.organizationId, otherOrg!.id),
+      });
+      expect(otherOrgStatuses.length).toBe(1);
+      expect(otherOrgStatuses[0]!.id).toBe(otherOrgStatus!.id);
+    });
+
+    it("should return correct response schema", async () => {
+      const result = await caller.statuses.delete({ id: statusId });
+
+      expect(result).toHaveProperty("success");
+      expect(typeof result.success).toBe("boolean");
+      expect(result.success).toBe(true);
+    });
+  });
 });

@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { createTrpcCaller, createTRPCContext } from "@repo/trpc";
-import { statusListRoute, statusCreateRoute, statusGetRoute, statusUpdateRoute } from "./routes/statuses";
+import { statusListRoute, statusCreateRoute, statusGetRoute, statusUpdateRoute, statusDeleteRoute } from "./routes/statuses";
 
 const statuses = new OpenAPIHono();
 
@@ -34,6 +34,14 @@ statuses.openapi(statusUpdateRoute, async (c) => {
   const params = c.req.valid("param");
   const body = c.req.valid("json");
   const data = await caller.statuses.update({ id: params.id, values: body });
+  return c.json(data);
+});
+
+statuses.openapi(statusDeleteRoute, async (c) => {
+  const context = createTRPCContext({ headers: c.req.raw.headers });
+  const caller = createTrpcCaller(context);
+  const params = c.req.valid("param");
+  const data = await caller.statuses.delete(params);
   return c.json(data);
 });
 

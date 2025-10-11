@@ -4,6 +4,8 @@ import {
   StatusCreateRequest,
   StatusGetRequest,
   StatusUpdateInput,
+  StatusDeleteRequest,
+  StatusDeleteResponse,
   Status,
 } from "@repo/validators";
 
@@ -134,6 +136,37 @@ export const statusUpdateRoute = createRoute({
     },
     400: {
       description: "Bad Request - Invalid input",
+    },
+    401: {
+      description: "Unauthorized",
+    },
+    404: {
+      description: "Status not found",
+    },
+    500: {
+      description: "Internal Server Error",
+    },
+  },
+});
+
+export const statusDeleteRoute = createRoute({
+  ...sharedConfig,
+  method: "delete",
+  title: "Delete Status",
+  summary: "Delete a status",
+  operationId: "deleteStatus",
+  path: "/{id}",
+  request: {
+    params: StatusDeleteRequest,
+  },
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: StatusDeleteResponse,
+        },
+      },
+      description: "Status deleted successfully",
     },
     401: {
       description: "Unauthorized",

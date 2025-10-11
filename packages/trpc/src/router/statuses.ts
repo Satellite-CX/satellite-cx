@@ -5,6 +5,8 @@ import {
   StatusCreateRequest,
   StatusUpdateInput,
   StatusGetRequest,
+  StatusDeleteRequest,
+  StatusDeleteResponse,
 } from "@repo/validators";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -83,5 +85,27 @@ export const statusesRouter = router({
         throw new TRPCError({ code: "NOT_FOUND", message: "Status not found" });
       }
       return result[0]!;
+    }),
+  delete: protectedProcedure
+    .input(StatusDeleteRequest)
+    .output(StatusDeleteResponse)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+      const { activeOrganizationId } = ctx.session;
+      const result = await ctx.db.rls((tx) =>
+        tx
+          .delete(statuses)
+          .where(
+            and(
+              eq(statuses.id, id),
+              eq(statuses.organizationId, activeOrganizationId)
+            )
+          )
+          .returning()
+      );
+      if (!result || result.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Status not found" });
+      }
+      return { success: true };
     }),
 });

@@ -748,4 +748,128 @@ describe("Statuses", () => {
       expect(response.headers.get("content-type")).toContain("application/json");
     });
   });
+
+  describe("DELETE /statuses/:id", () => {
+    it("should delete a status", async () => {
+      // First create a status to delete
+      const createData = {
+        name: "Delete Test Status",
+        icon: "🗑️",
+        color: "#ef4444",
+      };
+
+      const createResponse = await app.request("/statuses", {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(createData),
+      });
+
+      expect(createResponse.status).toBe(201);
+      const createdStatus = await createResponse.json();
+
+      // Now delete it
+      const deleteResponse = await app.request(`/statuses/${createdStatus.id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(deleteResponse.status).toBe(200);
+      const deleteResult = await deleteResponse.json();
+      expect(deleteResult.success).toBe(true);
+
+      // Verify it's no longer accessible
+      const getResponse = await app.request(`/statuses/${createdStatus.id}`, {
+        headers,
+      });
+      expect(getResponse.status).toBe(404);
+    });
+
+    it("should return 404 for non-existent status", async () => {
+      const response = await app.request("/statuses/non-existent-id", {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should return 401 without authentication", async () => {
+      const response = await app.request("/statuses/any-id", {
+        method: "DELETE",
+      });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should only delete status from user's organization", async () => {
+      // Create another organization with a status
+      const [otherOrg] = await adminDB
+        .insert(organizations)
+        .values({
+          id: "api-delete-isolation-test-org",
+          name: "API Delete Isolation Test Org",
+          slug: "api-delete-isolation-test-org",
+          createdAt: new Date(),
+        })
+        .returning();
+
+      const [otherOrgStatus] = await adminDB
+        .insert(statuses)
+        .values({
+          id: "api-other-org-status-delete",
+          organizationId: otherOrg!.id,
+          name: "Other Org Status",
+          icon: "🔹",
+          color: "purple",
+          createdAt: new Date(),
+        })
+        .returning();
+
+      // Try to delete the other organization's status
+      const response = await app.request(`/statuses/${otherOrgStatus!.id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(response.status).toBe(404);
+
+      // Verify the other org's status still exists
+      const otherOrgStatuses = await adminDB.query.statuses.findMany({
+        where: (statuses, { eq }) => eq(statuses.organizationId, otherOrg!.id),
+      });
+      expect(otherOrgStatuses.length).toBe(1);
+      expect(otherOrgStatuses[0]!.id).toBe(otherOrgStatus!.id);
+    });
+
+    it("should return JSON content type", async () => {
+      // First create a status to delete
+      const createData = {
+        name: "Content Type Delete Test",
+        icon: "📝",
+      };
+
+      const createResponse = await app.request("/statuses", {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(createData),
+      });
+
+      expect(createResponse.status).toBe(201);
+      const createdStatus = await createResponse.json();
+
+      const deleteResponse = await app.request(`/statuses/${createdStatus.id}`, {
+        method: "DELETE",
+        headers,
+      });
+
+      expect(deleteResponse.status).toBe(200);
+      expect(deleteResponse.headers.get("content-type")).toContain("application/json");
+    });
+  });
 });
